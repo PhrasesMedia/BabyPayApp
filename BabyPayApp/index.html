@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BabyPay Calculator</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.png" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+      max-width: 500px;
+      margin: auto;
+      text-align: center;
+    }
+    img {
+      width: 100px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+    h1 {
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: left;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .results {
+      margin-top: 20px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .result-item {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="icon.png" alt="BabyPay Logo" />
+  <h1>BabyPay Calculator</h1>
+
+  <label for="husbandIncome">Husband's Monthly After-Tax Income ($):</label>
+  <input type="number" id="husbandIncome" placeholder="e.g. 5300" />
+
+  <label for="wifeIncome">Wife's Monthly After-Tax Income ($):</label>
+  <input type="number" id="wifeIncome" placeholder="e.g. 4200" />
+
+  <button onclick="calculate()">Calculate BabyPay</button>
+
+  <div class="results" id="results" style="display: none;">
+    <div class="result-item" id="combinedIncome"></div>
+    <div class="result-item" id="govParentalLeave"></div>
+    <div class="result-item" id="wife2days"></div>
+    <div class="result-item" id="wife3days"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      const husbandIncome = parseFloat(document.getElementById('husbandIncome').value) || 0;
+      const wifeIncome = parseFloat(document.getElementById('wifeIncome').value) || 0;
+
+      const govParentalLeave = 3600;
+
+      const combinedIncome = husbandIncome + wifeIncome;
+      const withGovLeave = husbandIncome + govParentalLeave;
+      const wife2Days = husbandIncome + (wifeIncome * 2 / 5);
+      const wife3Days = husbandIncome + (wifeIncome * 3 / 5);
+
+      document.getElementById('combinedIncome').textContent = `Combined Monthly Income: $${combinedIncome.toFixed(2)}`;
+      document.getElementById('govParentalLeave').textContent = `With Government Parental Leave: $${withGovLeave.toFixed(2)}`;
+      document.getElementById('wife2days').textContent = `Wife Working 2 Days/Week: $${wife2Days.toFixed(2)}`;
+      document.getElementById('wife3days').textContent = `Wife Working 3 Days/Week: $${wife3Days.toFixed(2)}`;
+
+      document.getElementById('results').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
