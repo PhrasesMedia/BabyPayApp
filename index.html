@@ -1,111 +1,227 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BabyPay Calculator</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icon.png" />
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
+  <title>BabyPay Estimator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f9f9f9;
-      max-width: 500px;
-      margin: auto;
+      padding: 12px;
+      width: 320px;
+      max-height: 600px;
+      overflow-y: auto;
       text-align: center;
     }
-    img {
-      width: 100px;
-      height: auto;
-      margin-bottom: 10px;
+
+    img.logo {
+      width: 40px;
+      margin-bottom: 8px;
     }
-    h1 {
-      color: #333;
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
     }
-    label {
-      display: block;
-      margin-top: 15px;
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .input-group span {
+      padding: 6px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-right: none;
+      border-radius: 4px 0 0 4px;
       font-weight: bold;
-      text-align: left;
     }
-    input {
+
+    .input-group input {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 0 4px 4px 0;
+      border-left: none;
       box-sizing: border-box;
     }
-    button {
-      margin-top: 15px;
-      padding: 10px;
-      width: 100%;
-      background-color: #4CAF50;
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .results {
-      margin-top: 20px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .result-item {
+
+    .inline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
       margin-bottom: 10px;
+    }
+
+    .inline-row input[type="number"] {
+      flex: 1;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .pay-type-options {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .pay-type-options label {
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tax-toggle {
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    /* Primary buttons in blue */
+    button {
+      padding: 8px 12px;
+      width: 100%;
+      margin-bottom: 6px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background-color: #1976D2;
+    }
+
+    #result {
+      margin-top: 10px;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .breakdown {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      line-height: 1.4;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .breakdown h3 {
+      margin: 0 0 6px 0;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    .sponsor {
+      margin-top: 6px;
+    }
+
+    /* Support button in #F48FB1 */
+    .sponsor a {
+      display: inline-block;
+      background-color: #F48FB1;
+      color: white;
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+
+    .sponsor a:hover {
+      background-color: #EC407A;
+    }
+
+    .disclaimer {
+      font-size: 10px;
+      color: gray;
+      margin-top: 6px;
+      line-height: 1.4;
     }
   </style>
 </head>
 <body>
+  <img src="icon.png" alt="BabyPay Logo" class="logo" />
+  <h2>BabyPay Estimator</h2>
 
-  <img src="icon.png" alt="BabyPay Logo" />
-  <h1>BabyPay Calculator</h1>
-
-  <label for="husbandIncome">Husband's Monthly After-Tax Income ($):</label>
-  <input type="number" id="husbandIncome" placeholder="e.g. 5300" />
-
-  <label for="wifeIncome">Wife's Monthly After-Tax Income ($):</label>
-  <input type="number" id="wifeIncome" placeholder="e.g. 4200" />
-
-  <button onclick="calculate()">Calculate BabyPay</button>
-
-  <div class="results" id="results" style="display: none;">
-    <div class="result-item" id="combinedIncome"></div>
-    <div class="result-item" id="govParentalLeave"></div>
-    <div class="result-item" id="wife2days"></div>
-    <div class="result-item" id="wife3days"></div>
+  <div class="input-group">
+    <span>$</span>
+    <input id="userIncome" type="number" placeholder="Non Primary Caretaker (Gross Monthly)" />
   </div>
 
-  <script>
-    function calculate() {
-      const husbandIncome = parseFloat(document.getElementById('husbandIncome').value) || 0;
-      const wifeIncome = parseFloat(document.getElementById('wifeIncome').value) || 0;
+  <div class="input-group">
+    <span>$</span>
+    <input id="wifeIncome" type="number" placeholder="Primary Caretaker (Gross Monthly)" />
+  </div>
 
-      const govParentalLeave = 3600;
+  <div class="inline-row">
+    <input id="paidWeeks" type="number" placeholder="Paid leave weeks" />
+    <div class="pay-type-options">
+      <label><input type="checkbox" id="fullPay"> Full</label>
+      <label><input type="checkbox" id="halfPay"> Half</label>
+    </div>
+  </div>
 
-      const combinedIncome = husbandIncome + wifeIncome;
-      const withGovLeave = husbandIncome + govParentalLeave;
-      const wife2Days = husbandIncome + (wifeIncome * 2 / 5);
-      const wife3Days = husbandIncome + (wifeIncome * 3 / 5);
+  <div class="tax-toggle">
+    <label style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+      <input type="checkbox" id="showAfterTax" />
+      <span>Show After-Tax Estimates</span>
+    </label>
+  </div>
 
-      document.getElementById('combinedIncome').textContent = `Combined Monthly Income: $${combinedIncome.toFixed(2)}`;
-      document.getElementById('govParentalLeave').textContent = `With Government Parental Leave: $${withGovLeave.toFixed(2)}`;
-      document.getElementById('wife2days').textContent = `Wife Working 2 Days/Week: $${wife2Days.toFixed(2)}`;
-      document.getElementById('wife3days').textContent = `Wife Working 3 Days/Week: $${wife3Days.toFixed(2)}`;
+  <button id="calculate">BabyPay</button>
+  <button id="return2">Return to Work - 2 Days</button>
+  <button id="return3">Return to Work - 3 Days</button>
 
-      document.getElementById('results').style.display = 'block';
-    }
-  </script>
+  <div id="result"></div>
 
+  <div class="sponsor">
+    <a href="https://ko-fi.com/babypay" target="_blank">&#10084; Support BabyPay</a>
+  </div>
+  <p class="disclaimer">
+    * BabyPay is for general planning only and does not constitute financial advice. These figures are estimates only and should not be considered accurate data. Please confirm all details with your employer, Centrelink, or Services Australia.
+  </p>
+
+  <!-- Government Pay Modal -->
+  <div id="infoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background:white; padding: 16px 18px; border-radius: 8px; width: 280px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+      <h3 style="margin-top: 0; font-size: 15px;">Government Pay Breakdown</h3>
+      <p style="margin: 6px 0;">
+         $915.80/week x 52 = $47,621.60/year<br>
+         Tax on this income:<br>
+        &nbsp;&nbsp; 0% on first $18,200 = $0<br>
+        &nbsp;&nbsp; 16% on $26,800 = $4,288<br>
+        &nbsp;&nbsp; 30% on $2,621.60 = $786.48<br>
+         Total Tax: $5,074.48<br><br>
+         Net Annually = $42,547.12<br>
+         Net Monthly = $3,545.59<br><br>
+        BabyPay uses $2,960/month for conservative planning.
+      </p>
+      <button onclick="closeInfoModal()" style="margin-top: 12px; background-color: #2196F3; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">Close</button>
+    </div>
+  </div>
+
+  <!-- User Tax Modal -->
+  <div id="userTaxModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+    <div id="userTaxModalContent" style="background:white; padding: 16px 18px; border-radius: 8px; width: 280px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+      <!-- Content injected dynamically -->
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
 </body>
 </html>
