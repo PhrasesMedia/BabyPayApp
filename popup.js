@@ -118,14 +118,31 @@ function closeInfoModal() {
   document.getElementById("infoModal").style.display = "none";
 }
 
+// ——— Helper: reveal product section with fade-in ———
+
+function revealProductSection() {
+  const productSection = document.querySelector(".product-section");
+  if (!productSection) return;
+
+  // If it's still display:none from HTML, turn it on
+  if (productSection.style.display === "none") {
+    productSection.style.display = "inline-block";
+    // Wait a frame so the browser applies display, then animate opacity/transform
+    requestAnimationFrame(() => {
+      productSection.classList.add("visible");
+    });
+  } else {
+    productSection.classList.add("visible");
+  }
+}
+
 // ——— Main calculators ———
 
 function calculateBabyPay() {
   lastAction = 'babyPay';
 
-  // ⭐ NEW: reveal product cards after BabyPay is used
-  const productSection = document.querySelector(".product-section");
-  if (productSection) productSection.style.display = "inline-block";
+  // Show products (with animation)
+  revealProductSection();
 
   const userGross  = parseFloat(document.getElementById("userIncome").value) || 0;
   const wifeGross  = parseFloat(document.getElementById("wifeIncome").value)  || 0;
@@ -171,9 +188,8 @@ function calculateReturnWork(days) {
   lastAction = 'return';
   lastReturnDays = days;
 
-  // ⭐ NEW: reveal product cards after return-to-work calc is used
-  const productSection = document.querySelector(".product-section");
-  if (productSection) productSection.style.display = "inline-block";
+  // Show products (with animation)
+  revealProductSection();
 
   const userGross   = parseFloat(document.getElementById("userIncome").value) || 0;
   const wifeMonthly = parseFloat(document.getElementById("wifeIncome").value)  || 0;
