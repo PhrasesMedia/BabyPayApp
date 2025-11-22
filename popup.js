@@ -194,37 +194,53 @@ function calculateReturnWork(days) {
 // ——— Initialization ———
 
 (function init() {
-  // clear on load
+
+  // ⭐ Added: reveal product section after tool is used  
+  const productSection = document.querySelector(".product-section");
+  function revealProducts() {
+    if (productSection) {
+      productSection.style.display = "inline-block";
+    }
+  }
+
+  // clear results on load
   document.getElementById("result").innerHTML = "";
 
-  // Button clicks
-  document.getElementById("calculate").addEventListener("click", calculateBabyPay);
-  document.getElementById("return2").addEventListener("click", () => calculateReturnWork(2));
-  document.getElementById("return3").addEventListener("click", () => calculateReturnWork(3));
+  // Button clicks (now reveal products too)
+  document.getElementById("calculate").addEventListener("click", () => {
+    calculateBabyPay();
+    revealProducts();
+  });
+
+  document.getElementById("return2").addEventListener("click", () => {
+    calculateReturnWork(2);
+    revealProducts();
+  });
+
+  document.getElementById("return3").addEventListener("click", () => {
+    calculateReturnWork(3);
+    revealProducts();
+  });
 
   // After-tax toggle updates current view
   document.getElementById("showAfterTax").addEventListener("change", () => {
-    if (lastAction === 'babyPay') {
-      calculateBabyPay();
-    } else if (lastAction === 'return') {
-      calculateReturnWork(lastReturnDays);
-    }
+    if (lastAction === 'babyPay')      calculateBabyPay();
+    else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
   });
 
   // Live updates on input/change
   ['userIncome','wifeIncome','paidWeeks'].forEach(id => {
-    document.getElementById(id)
-      .addEventListener('input', () => {
-        if (lastAction === 'babyPay') calculateBabyPay();
-        else if (lastAction === 'return') calculateReturnWork(lastReturnDays);
-      });
+    document.getElementById(id).addEventListener('input', () => {
+      if (lastAction === 'babyPay')      calculateBabyPay();
+      else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
+    });
   });
+
   ['fullPay','halfPay'].forEach(id => {
-    document.getElementById(id)
-      .addEventListener('change', () => {
-        if (lastAction === 'babyPay') calculateBabyPay();
-        else if (lastAction === 'return') calculateReturnWork(lastReturnDays);
-      });
+    document.getElementById(id).addEventListener('change', () => {
+      if (lastAction === 'babyPay')      calculateBabyPay();
+      else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
+    });
   });
 
   // Expose closeInfoModal
