@@ -1,5 +1,10 @@
 // ======================================
 // popup.js (BabyPay v3.8 + live updates)
+// • Renders data on button click or live when inputs change.
+// • Monthly-only tax breakdown in info-modals using original gross values.
+// • “Government Pay (24 weeks)” & “Paid Leave (<n> weeks)” cards.
+// • Government Pay card notes the $915.80/week gross rate.
+// • After-tax toggle re-calculates the view without altering stored gross.
 // ======================================
 
 let lastAction = null;      // 'babyPay' or 'return'
@@ -7,18 +12,21 @@ let lastReturnDays = null;  // stores days for return-to-work
 
 // ——— Utility functions ———
 
+// Format a number into “$X,XXX/month”
 function formatCurrency(amount) {
   return "$" + amount.toLocaleString(undefined, { maximumFractionDigits: 0 }) + "/month";
 }
 
+// Australian tax brackets (annual → total tax)
 function calculateTax(annualIncome) {
-  if (annualIncome <= 18200)  return 0;
-  if (annualIncome <= 45000)  return (annualIncome - 18200) * 0.16;
-  if (annualIncome <= 135000) return 4288 + (annualIncome - 45000) * 0.30;
-  if (annualIncome <= 190000) return 31288 + (annualIncome - 135000) * 0.37;
+  if (annualIncome <= 18200)            return 0;
+  if (annualIncome <= 45000)            return (annualIncome - 18200) * 0.16;
+  if (annualIncome <= 135000)           return 4288 + (annualIncome - 45000) * 0.30;
+  if (annualIncome <= 190000)           return 31288 + (annualIncome - 135000) * 0.37;
   return 51688 + (annualIncome - 190000) * 0.45;
 }
 
+// Return gross or net/month based on checkbox
 function getDisplayIncome(monthlyGross, showAfterTax) {
   if (!showAfterTax) return monthlyGross;
   const annualGross = monthlyGross * 12;
@@ -58,31 +66,30 @@ function renderBreakdown(
       <div style="font-weight:bold;margin-bottom:6px;">${title}</div>
       <div style="font-size:12px;margin-bottom:4px;">
         Non-Primary (${labelType}): ${formatCurrency(Math.round(nonPrimaryDisplay))}
-        ${hasInfo ? makeIcon(nonPrimaryGross, "Non-Primary gross value") : ""}
+        ${hasInfo ? makeIcon(nonPrimaryGross, `${labelType} Non-Primary`) : ""}
       </div>
       <div style="font-size:12px;margin-bottom:4px;">
         Primary (${labelType}): ${formatCurrency(Math.round(primaryDisplay))}
-        ${hasInfo ? makeIcon(primaryGross, "Primary gross value") : ""}
+        ${hasInfo ? makeIcon(primaryGross, `${labelType} Primary`) : ""}
       </div>
       <div style="font-size:12px;font-weight:bold;margin-bottom:4px;">
         Total: ${formatCurrency(Math.round(totalDisplay))}
-        ${hasInfo ? makeIcon(totalGross, "Total of both values") : ""}
+        ${hasInfo ? makeIcon(totalGross, "Total = Non-Primary + Primary") : ""}
       </div>
       ${note ? `<div style="font-size:11px;color:#555;">${note}</div>` : ""}
     </div>
   `;
 }
 
-// ——— Info icon modal ———
+// ——— Info-icon handler ———
 
 function attachInfoListeners() {
   document.querySelectorAll(".info-icon").forEach(icon => {
     icon.addEventListener("click", () => {
-      const gross  = parseFloat(icon.dataset.value) || 0;
-      const annual = gross * 12;
-      const taxMon = calculateTax(annual) / 12;
-      const netMon = gross - taxMon;
-
+      const gross   = parseFloat(icon.dataset.value) || 0;
+      const annual  = gross * 12;
+      const taxMon  = calculateTax(annual) / 12;
+      const netMon  = gross - taxMon;
       const modal   = document.getElementById("userTaxModal");
       const content = document.getElementById("userTaxModalContent");
 
@@ -99,18 +106,26 @@ function attachInfoListeners() {
   });
 
   document.getElementById("userTaxModal").addEventListener("click", e => {
-    if (e.target.id === "userTaxModal") e.target.style.display = "none";
+    if (e.target.id === "userTaxModal") {
+      e.target.style.display = "none";
+    }
   });
 }
+
+// ——— Close the built-in Government-pay modal ———
 
 function closeInfoModal() {
   document.getElementById("infoModal").style.display = "none";
 }
 
-// ——— Calculations ———
+// ——— Main calculators ———
 
 function calculateBabyPay() {
   lastAction = 'babyPay';
+
+  // ⭐ NEW: reveal product cards after BabyPay is used
+  const productSection = document.querySelector(".product-section");
+  if (productSection) productSection.style.display = "inline-block";
 
   const userGross  = parseFloat(document.getElementById("userIncome").value) || 0;
   const wifeGross  = parseFloat(document.getElementById("wifeIncome").value)  || 0;
@@ -156,10 +171,13 @@ function calculateReturnWork(days) {
   lastAction = 'return';
   lastReturnDays = days;
 
+  // ⭐ NEW: reveal product cards after return-to-work calc is used
+  const productSection = document.querySelector(".product-section");
+  if (productSection) productSection.style.display = "inline-block";
+
   const userGross   = parseFloat(document.getElementById("userIncome").value) || 0;
   const wifeMonthly = parseFloat(document.getElementById("wifeIncome").value)  || 0;
   const showAfter   = document.getElementById("showAfterTax").checked;
-
   const dayGross    = (wifeMonthly * days) / 5;
 
   const displayUser = getDisplayIncome(userGross, showAfter);
@@ -184,53 +202,40 @@ function calculateReturnWork(days) {
 // ——— Initialization ———
 
 (function init() {
-
-  // ⭐ NEW: Reveal product cards after tool is used
-  const productSection = document.querySelector(".product-section");
-  function revealProducts() {
-    if (productSection) productSection.style.display = "inline-block";
-  }
-
+  // clear on load
   document.getElementById("result").innerHTML = "";
 
-  // UPDATED button listeners
-  document.getElementById("calculate").addEventListener("click", () => {
-    calculateBabyPay();
-    revealProducts();
-  });
+  // Button clicks
+  document.getElementById("calculate").addEventListener("click", calculateBabyPay);
+  document.getElementById("return2").addEventListener("click", () => calculateReturnWork(2));
+  document.getElementById("return3").addEventListener("click", () => calculateReturnWork(3));
 
-  document.getElementById("return2").addEventListener("click", () => {
-    calculateReturnWork(2);
-    revealProducts();
-  });
-
-  document.getElementById("return3").addEventListener("click", () => {
-    calculateReturnWork(3);
-    revealProducts();
-  });
-
-  // After-tax live update
+  // After-tax toggle updates current view
   document.getElementById("showAfterTax").addEventListener("change", () => {
-    if (lastAction === 'babyPay')      calculateBabyPay();
-    else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
+    if (lastAction === 'babyPay') {
+      calculateBabyPay();
+    } else if (lastAction === 'return') {
+      calculateReturnWork(lastReturnDays);
+    }
   });
 
-  // Live updating on input
+  // Live updates on input/change
   ['userIncome','wifeIncome','paidWeeks'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-      if (lastAction === 'babyPay')      calculateBabyPay();
-      else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
-    });
+    document.getElementById(id)
+      .addEventListener('input', () => {
+        if (lastAction === 'babyPay') calculateBabyPay();
+        else if (lastAction === 'return') calculateReturnWork(lastReturnDays);
+      });
   });
-
   ['fullPay','halfPay'].forEach(id => {
-    document.getElementById(id).addEventListener('change', () => {
-      if (lastAction === 'babyPay')      calculateBabyPay();
-      else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
-    });
+    document.getElementById(id)
+      .addEventListener('change', () => {
+        if (lastAction === 'babyPay') calculateBabyPay();
+        else if (lastAction === 'return') calculateReturnWork(lastReturnDays);
+      });
   });
 
-  // Close government modal
+  // Expose closeInfoModal
   window.closeInfoModal = closeInfoModal;
   document.getElementById("infoModal").addEventListener("click", e => {
     if (e.target.id === "infoModal") closeInfoModal();
