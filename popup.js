@@ -1,10 +1,5 @@
 // ======================================
 // popup.js (BabyPay v3.8 + live updates)
-// • Renders data on button click or live when inputs change.
-// • Monthly-only tax breakdown in info-modals using original gross values.
-// • “Government Pay (24 weeks)” & “Paid Leave (<n> weeks)” cards.
-// • Government Pay card notes the $915.80/week gross rate.
-// • After-tax toggle re-calculates the view without altering stored gross.
 // ======================================
 
 let lastAction = null;      // 'babyPay' or 'return'
@@ -12,21 +7,18 @@ let lastReturnDays = null;  // stores days for return-to-work
 
 // ——— Utility functions ———
 
-// Format a number into “$X,XXX/month”
 function formatCurrency(amount) {
   return "$" + amount.toLocaleString(undefined, { maximumFractionDigits: 0 }) + "/month";
 }
 
-// Australian tax brackets (annual → total tax)
 function calculateTax(annualIncome) {
-  if (annualIncome <= 18200)            return 0;
-  if (annualIncome <= 45000)            return (annualIncome - 18200) * 0.16;
-  if (annualIncome <= 135000)           return 4288 + (annualIncome - 45000) * 0.30;
-  if (annualIncome <= 190000)           return 31288 + (annualIncome - 135000) * 0.37;
+  if (annualIncome <= 18200)  return 0;
+  if (annualIncome <= 45000)  return (annualIncome - 18200) * 0.16;
+  if (annualIncome <= 135000) return 4288 + (annualIncome - 45000) * 0.30;
+  if (annualIncome <= 190000) return 31288 + (annualIncome - 135000) * 0.37;
   return 51688 + (annualIncome - 190000) * 0.45;
 }
 
-// Return gross or net/month based on checkbox
 function getDisplayIncome(monthlyGross, showAfterTax) {
   if (!showAfterTax) return monthlyGross;
   const annualGross = monthlyGross * 12;
@@ -66,30 +58,31 @@ function renderBreakdown(
       <div style="font-weight:bold;margin-bottom:6px;">${title}</div>
       <div style="font-size:12px;margin-bottom:4px;">
         Non-Primary (${labelType}): ${formatCurrency(Math.round(nonPrimaryDisplay))}
-        ${hasInfo ? makeIcon(nonPrimaryGross, `${labelType} Non-Primary`) : ""}
+        ${hasInfo ? makeIcon(nonPrimaryGross, "Non-Primary gross value") : ""}
       </div>
       <div style="font-size:12px;margin-bottom:4px;">
         Primary (${labelType}): ${formatCurrency(Math.round(primaryDisplay))}
-        ${hasInfo ? makeIcon(primaryGross, `${labelType} Primary`) : ""}
+        ${hasInfo ? makeIcon(primaryGross, "Primary gross value") : ""}
       </div>
       <div style="font-size:12px;font-weight:bold;margin-bottom:4px;">
         Total: ${formatCurrency(Math.round(totalDisplay))}
-        ${hasInfo ? makeIcon(totalGross, "Total = Non-Primary + Primary") : ""}
+        ${hasInfo ? makeIcon(totalGross, "Total of both values") : ""}
       </div>
       ${note ? `<div style="font-size:11px;color:#555;">${note}</div>` : ""}
     </div>
   `;
 }
 
-// ——— Info-icon handler ———
+// ——— Info icon modal ———
 
 function attachInfoListeners() {
   document.querySelectorAll(".info-icon").forEach(icon => {
     icon.addEventListener("click", () => {
-      const gross   = parseFloat(icon.dataset.value) || 0;
-      const annual  = gross * 12;
-      const taxMon  = calculateTax(annual) / 12;
-      const netMon  = gross - taxMon;
+      const gross  = parseFloat(icon.dataset.value) || 0;
+      const annual = gross * 12;
+      const taxMon = calculateTax(annual) / 12;
+      const netMon = gross - taxMon;
+
       const modal   = document.getElementById("userTaxModal");
       const content = document.getElementById("userTaxModalContent");
 
@@ -106,19 +99,15 @@ function attachInfoListeners() {
   });
 
   document.getElementById("userTaxModal").addEventListener("click", e => {
-    if (e.target.id === "userTaxModal") {
-      e.target.style.display = "none";
-    }
+    if (e.target.id === "userTaxModal") e.target.style.display = "none";
   });
 }
-
-// ——— Close the built-in Government-pay modal ———
 
 function closeInfoModal() {
   document.getElementById("infoModal").style.display = "none";
 }
 
-// ——— Main calculators ———
+// ——— Calculations ———
 
 function calculateBabyPay() {
   lastAction = 'babyPay';
@@ -170,6 +159,7 @@ function calculateReturnWork(days) {
   const userGross   = parseFloat(document.getElementById("userIncome").value) || 0;
   const wifeMonthly = parseFloat(document.getElementById("wifeIncome").value)  || 0;
   const showAfter   = document.getElementById("showAfterTax").checked;
+
   const dayGross    = (wifeMonthly * days) / 5;
 
   const displayUser = getDisplayIncome(userGross, showAfter);
@@ -195,18 +185,15 @@ function calculateReturnWork(days) {
 
 (function init() {
 
-  // ⭐ Added: reveal product section after tool is used  
+  // ⭐ NEW: Reveal product cards after tool is used
   const productSection = document.querySelector(".product-section");
   function revealProducts() {
-    if (productSection) {
-      productSection.style.display = "inline-block";
-    }
+    if (productSection) productSection.style.display = "inline-block";
   }
 
-  // clear results on load
   document.getElementById("result").innerHTML = "";
 
-  // Button clicks (now reveal products too)
+  // UPDATED button listeners
   document.getElementById("calculate").addEventListener("click", () => {
     calculateBabyPay();
     revealProducts();
@@ -222,13 +209,13 @@ function calculateReturnWork(days) {
     revealProducts();
   });
 
-  // After-tax toggle updates current view
+  // After-tax live update
   document.getElementById("showAfterTax").addEventListener("change", () => {
     if (lastAction === 'babyPay')      calculateBabyPay();
     else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
   });
 
-  // Live updates on input/change
+  // Live updating on input
   ['userIncome','wifeIncome','paidWeeks'].forEach(id => {
     document.getElementById(id).addEventListener('input', () => {
       if (lastAction === 'babyPay')      calculateBabyPay();
@@ -243,7 +230,7 @@ function calculateReturnWork(days) {
     });
   });
 
-  // Expose closeInfoModal
+  // Close government modal
   window.closeInfoModal = closeInfoModal;
   document.getElementById("infoModal").addEventListener("click", e => {
     if (e.target.id === "infoModal") closeInfoModal();
