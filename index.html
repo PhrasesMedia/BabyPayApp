@@ -214,14 +214,16 @@
       margin: 0;
     }
 
+    /* ⭐ Subtle grey links (Option B) ⭐ */
     .product-card-link {
-      font-size: 12px;
-      color: #1976D2;
+      font-size: 11.5px;
+      color: #777;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: normal;
     }
 
     .product-card-link:hover {
+      color: #1976D2;
       text-decoration: underline;
     }
 
@@ -285,7 +287,7 @@
         <div class="product-card-content">
           <p class="product-card-title">Pram</p>
           <a href="https://amzn.to/49Arp6e" target="_blank" class="product-card-link">
-            View on Amazon →
+            View on Amazon
           </a>
         </div>
       </div>
@@ -295,7 +297,7 @@
         <div class="product-card-content">
           <p class="product-card-title">Car Seat</p>
           <a href="https://amzn.to/3LVURJY" target="_blank" class="product-card-link">
-            View on Amazon →
+            View on Amazon
           </a>
         </div>
       </div>
@@ -305,7 +307,7 @@
         <div class="product-card-content">
           <p class="product-card-title">Bassinet</p>
           <a href="https://amzn.to/49Bkuty" target="_blank" class="product-card-link">
-            View on Amazon →
+            View on Amazon
           </a>
         </div>
       </div>
@@ -318,30 +320,6 @@
     These figures are estimates only and should not be considered accurate data.<br>
     Please confirm all details with your employer, Centrelink, or Services Australia.
   </p>
-
-  <div id="infoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background:white; padding: 16px 18px; border-radius: 8px; width: 280px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-      <h3 style="margin-top: 0; font-size: 15px;">Government Pay Breakdown</h3>
-      <p style="margin: 6px 0;">
-        $915.80/week x 52 = $47,621.60/year<br>
-        Tax on this income:<br>
-        &nbsp;&nbsp; 0% on first $18,200 = $0<br>
-        &nbsp;&nbsp; 16% on $26,800 = $4,288<br>
-        &nbsp;&nbsp; 30% on $2,621.60 = $786.48<br>
-        Total Tax: $5,074.48<br><br>
-        Net Annually = $42,547.12<br>
-        Net Monthly = $3,545.59<br><br>
-        BabyPay uses $2,960/month for conservative planning.
-      </p>
-      <button onclick="closeInfoModal()" style="margin-top: 12px; background-color: #2196F3; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">Close</button>
-    </div>
-  </div>
-
-  <div id="userTaxModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
-    <div id="userTaxModalContent" style="background:white; padding: 16px 18px; border-radius: 8px; width: 280px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-      <!-- Content injected dynamically -->
-    </div>
-  </div>
 
   <script src="popup.js"></script>
 </body>
