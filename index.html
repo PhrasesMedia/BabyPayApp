@@ -1,39 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BabyPay – Parental Leave Estimator</title>
-  <link rel="icon" href="icon.png" type="image/png">
+  <title>BabyPay Estimator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 24px;
+      padding: 12px;
+      width: 320px;
+      max-height: 600px;
+      overflow-y: auto;
       text-align: center;
-      background-color: #fafafa;
     }
 
-    header img {
-      width: 60px;
+    img.logo {
+      width: 40px;
+      margin-bottom: 8px;
     }
 
-    h1 {
-      font-size: 24px;
-      margin: 8px 0 4px 0;
-    }
-
-    p.subtitle {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 24px;
+    h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
     }
 
     .input-group {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .input-group span {
@@ -88,10 +80,9 @@
     }
 
     button {
-      padding: 10px 16px;
+      padding: 8px 12px;
       width: 100%;
-      max-width: 300px;
-      margin: 8px auto;
+      margin-bottom: 6px;
       background-color: #2196F3;
       color: white;
       border: none;
@@ -99,7 +90,6 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 14px;
-      display: block;
     }
 
     button:hover {
@@ -107,7 +97,7 @@
     }
 
     #result {
-      margin-top: 12px;
+      margin-top: 10px;
       font-size: 13px;
       text-align: left;
     }
@@ -115,7 +105,7 @@
     .breakdown {
       background-color: #fff;
       border: 1px solid #ddd;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 8px;
       margin-bottom: 10px;
       font-size: 13px;
@@ -135,7 +125,7 @@
     }
 
     .sponsor {
-      margin-top: 10px;
+      margin-top: 6px;
     }
 
     .sponsor a {
@@ -157,17 +147,14 @@
     .disclaimer {
       font-size: 10px;
       color: gray;
-      margin-top: 10px;
+      margin-top: 6px;
       line-height: 1.4;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="icon.png" alt="BabyPay Logo" />
-    <h1>BabyPay Estimator</h1>
-    <p class="subtitle">Plan your parental leave income with clarity</p>
-  </header>
+  <img src="icon.png" alt="BabyPay Logo" class="logo" />
+  <h2>BabyPay Estimator</h2>
 
   <div class="input-group">
     <span>$</span>
@@ -203,32 +190,38 @@
   <div class="sponsor">
     <a href="https://ko-fi.com/babypay" target="_blank">&#10084; Support BabyPay</a>
   </div>
+
+  <!-- ✅ AMAZON AFFILIATE LINK ADDED HERE -->
+  <div class="affiliate" style="margin-top:6px; font-size:12px;">
+    <a href="https://amzn.to/4p2otUS" target="_blank">Recommended Baby Essentials (Affiliate)</a>
+  </div>
+
   <p class="disclaimer">
-    * BabyPay is for general planning only and does not constitute financial advice. These figures are estimates only and should not be considered accurate data. Please confirm all details with your employer, Centrelink, or Services Australia.
+    * BabyPay is for general planning only and does not constitute financial advice.
   </p>
 
+  <!-- Government Pay Modal -->
   <div id="infoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
     <div style="background:white; padding: 16px 18px; border-radius: 8px; width: 280px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
       <h3 style="margin-top: 0; font-size: 15px;">Government Pay Breakdown</h3>
       <p style="margin: 6px 0;">
-        $915.80/week x 52 = $47,621.60/year<br>
-        Tax on this income:<br>
+         $915.80/week x 52 = $47,621.60/year<br>
+         Tax on this income:<br>
         &nbsp;&nbsp; 0% on first $18,200 = $0<br>
         &nbsp;&nbsp; 16% on $26,800 = $4,288<br>
         &nbsp;&nbsp; 30% on $2,621.60 = $786.48<br>
-        Total Tax: $5,074.48<br><br>
-        Net Annually = $42,547.12<br>
-        Net Monthly = $3,545.59<br><br>
+         Total Tax: $5,074.48<br><br>
+         Net Annually = $42,547.12<br>
+         Net Monthly = $3,545.59<br><br>
         BabyPay uses $2,960/month for conservative planning.
       </p>
       <button onclick="closeInfoModal()" style="margin-top: 12px; background-color: #2196F3; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">Close</button>
     </div>
   </div>
 
+  <!-- User Tax Modal -->
   <div id="userTaxModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
-    <div id="userTaxModalContent" style="background:white; padding: 16px 18px; border-radius: 8px; width: 280px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-      <!-- Content injected dynamically -->
-    </div>
+    <div id="userTaxModalContent" style="background:white; padding: 16px 18px; border-radius: 8px; width: 280px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"></div>
   </div>
 
   <script src="popup.js"></script>
