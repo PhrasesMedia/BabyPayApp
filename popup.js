@@ -1,10 +1,10 @@
 // ======================================
-// popup.js (BabyPay v3.8 + live updates)
+// popup.js (BabyPay v3.9 + Medicare levy)
 // • Renders data on button click or live when inputs change.
 // • Monthly-only tax breakdown in info-modals using original gross values.
 // • “Government Pay (24 weeks)” & “Paid Leave (<n> weeks)” cards.
 // • Government Pay card notes the $948.10/week gross rate.
-// • After-tax toggle re-calculates the view without altering stored gross.
+// • After-tax includes income tax + 2% Medicare levy.
 // ======================================
 
 let lastAction = null;      // 'babyPay' or 'return'
@@ -17,8 +17,8 @@ function formatCurrency(amount) {
   return "$" + amount.toLocaleString(undefined, { maximumFractionDigits: 0 }) + "/month";
 }
 
-// Australian tax brackets (annual → total tax)
-function calculateTax(annualIncome) {
+// Australian income tax brackets (annual → income tax only, no Medicare)
+function calculateIncomeTax(annualIncome) {
   if (annualIncome <= 18200)            return 0;
   if (annualIncome <= 45000)            return (annualIncome - 18200) * 0.16;
   if (annualIncome <= 135000)           return 4288 + (annualIncome - 45000) * 0.30;
@@ -27,11 +27,17 @@ function calculateTax(annualIncome) {
 }
 
 // Return gross or net/month based on checkbox
+// Net = Gross - (Income tax + 2% Medicare levy)
 function getDisplayIncome(monthlyGross, showAfterTax) {
   if (!showAfterTax) return monthlyGross;
-  const annualGross = monthlyGross * 12;
-  const annualTax   = calculateTax(annualGross);
-  return (annualGross - annualTax) / 12;
+
+  const annualGross       = monthlyGross * 12;
+  const incomeTaxAnnual   = calculateIncomeTax(annualGross);
+  const medicareAnnual    = annualGross * 0.02;          // 2% Medicare levy
+  const totalTaxAnnual    = incomeTaxAnnual + medicareAnnual;
+  const annualNet         = annualGross - totalTaxAnnual;
+
+  return annualNet / 12;
 }
 
 // ——— Render breakdown cards ———
@@ -47,7 +53,7 @@ function renderBreakdown(
   nonPrimaryGross = 0,
   primaryGross = 0
 ) {
-  const labelType = showAfterTax ? "Net" : "Gross";
+  const labelType  = showAfterTax ? "Net" : "Gross";
   const totalGross = nonPrimaryGross + primaryGross;
 
   const makeIcon = (grossAmt, tip) => `
@@ -86,22 +92,31 @@ function renderBreakdown(
 function attachInfoListeners() {
   document.querySelectorAll(".info-icon").forEach(icon => {
     icon.addEventListener("click", () => {
-      const gross   = parseFloat(icon.dataset.value) || 0;
+      const gross   = parseFloat(icon.dataset.value) || 0;  // monthly gross
       const annual  = gross * 12;
-      const taxMon  = calculateTax(annual) / 12;
-      const netMon  = gross - taxMon;
+
+      const incomeTaxAnnual = calculateIncomeTax(annual);
+      const medicareAnnual  = annual * 0.02;
+      const totalTaxAnnual  = incomeTaxAnnual + medicareAnnual;
+
+      const incomeTaxMon = incomeTaxAnnual / 12;
+      const medicareMon  = medicareAnnual / 12;
+      const totalTaxMon  = totalTaxAnnual / 12;
+      const netMon       = gross - totalTaxMon;
+
       const modal   = document.getElementById("userTaxModal");
       const content = document.getElementById("userTaxModalContent");
 
-      // If the modal/content elements don't exist, just bail out safely
       if (!modal || !content) return;
 
       content.innerHTML = `
-        <h3 style="margin:0 0 8px;font-size:15px;">Tax Breakdown</h3>
+        <h3 style="margin:0 0 8px;font-size:15px;">Tax Breakdown (Estimate)</h3>
         <p style="margin:0;font-size:13px;line-height:1.4;">
           Gross: ${formatCurrency(Math.round(gross))}<br>
-          Tax:   ${formatCurrency(Math.round(taxMon))}<br>
-          Net:   ${formatCurrency(Math.round(netMon))}
+          Income tax: ${formatCurrency(Math.round(incomeTaxMon))}<br>
+          Medicare (2%): ${formatCurrency(Math.round(medicareMon))}<br>
+          Total tax: ${formatCurrency(Math.round(totalTaxMon))}<br>
+          Net: ${formatCurrency(Math.round(netMon))}
         </p>
       `;
       modal.style.display = "flex";
@@ -118,7 +133,7 @@ function attachInfoListeners() {
   }
 }
 
-// ——— Close the built-in Government-pay modal ———
+// ——— Close the built-in Government-pay modal (legacy, safe) ———
 
 function closeInfoModal() {
   const el = document.getElementById("infoModal");
@@ -153,7 +168,7 @@ function calculateBabyPay() {
   const showAfter  = document.getElementById("showAfterTax").checked;
   const payRate    = document.getElementById("fullPay").checked ? 1 : 0.5;
 
-  const govGross   = 948.10 * 52 / 12;   // UPDATED RATE
+  const govGross   = 948.10 * 52 / 12;   // Government PPL monthly gross
   const leaveGross = wifeGross * payRate;
 
   const displayUser  = getDisplayIncome(userGross, showAfter);
@@ -166,7 +181,7 @@ function calculateBabyPay() {
       displayUser,
       displayGov,
       displayUser + displayGov,
-      "Government payment rate: $948.10 per week (gross)",   // UPDATED TEXT
+      "Government payment rate: $948.10 per week (gross)",
       showAfter,
       true,
       userGross,
@@ -245,12 +260,11 @@ function calculateReturnWork(days) {
     });
   });
 
-  // Safe infoModal listener (prevents crash)
+  // Safe legacy infoModal listener (if it exists)
   const infoModal = document.getElementById("infoModal");
   if (infoModal) {
     infoModal.addEventListener("click", e => {
       if (e.target.id === "infoModal") closeInfoModal();
     });
   }
-
 })();
