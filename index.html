@@ -175,10 +175,11 @@
     }
 
     .product-card-thumb {
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-    }
+  width: 40px;        /* or 32px if you want smaller */
+  height: auto;       /* keep natural aspect ratio */
+  border-radius: 4px;
+  object-fit: contain;
+}
 
     .product-card-title {
       font-weight: bold;
