@@ -105,17 +105,21 @@ function attachInfoListeners() {
     });
   });
 
-  document.getElementById("userTaxModal").addEventListener("click", e => {
-    if (e.target.id === "userTaxModal") {
-      e.target.style.display = "none";
-    }
-  });
+  const utm = document.getElementById("userTaxModal");
+  if (utm) {
+    utm.addEventListener("click", e => {
+      if (e.target.id === "userTaxModal") {
+        e.target.style.display = "none";
+      }
+    });
+  }
 }
 
 // ——— Close the built-in Government-pay modal ———
 
 function closeInfoModal() {
-  document.getElementById("infoModal").style.display = "none";
+  const el = document.getElementById("infoModal");
+  if (el) el.style.display = "none";
 }
 
 // ——— Helper: reveal product section with fade-in ———
@@ -124,10 +128,8 @@ function revealProductSection() {
   const productSection = document.querySelector(".product-section");
   if (!productSection) return;
 
-  // If it's still display:none from HTML, turn it on
   if (productSection.style.display === "none") {
     productSection.style.display = "inline-block";
-    // Wait a frame so the browser applies display, then animate opacity/transform
     requestAnimationFrame(() => {
       productSection.classList.add("visible");
     });
@@ -140,8 +142,6 @@ function revealProductSection() {
 
 function calculateBabyPay() {
   lastAction = 'babyPay';
-
-  // Show products (with animation)
   revealProductSection();
 
   const userGross  = parseFloat(document.getElementById("userIncome").value) || 0;
@@ -150,7 +150,7 @@ function calculateBabyPay() {
   const showAfter  = document.getElementById("showAfterTax").checked;
   const payRate    = document.getElementById("fullPay").checked ? 1 : 0.5;
 
-  const govGross   = 948.10 * 52 / 12;
+  const govGross   = 948.10 * 52 / 12;   // UPDATED RATE
   const leaveGross = wifeGross * payRate;
 
   const displayUser  = getDisplayIncome(userGross, showAfter);
@@ -163,7 +163,7 @@ function calculateBabyPay() {
       displayUser,
       displayGov,
       displayUser + displayGov,
-      "Government payment rate: $948.80 per week (gross)",
+      "Government payment rate: $948.10 per week (gross)",   // UPDATED TEXT
       showAfter,
       true,
       userGross,
@@ -188,7 +188,6 @@ function calculateReturnWork(days) {
   lastAction = 'return';
   lastReturnDays = days;
 
-  // Show products (with animation)
   revealProductSection();
 
   const userGross   = parseFloat(document.getElementById("userIncome").value) || 0;
@@ -218,42 +217,37 @@ function calculateReturnWork(days) {
 // ——— Initialization ———
 
 (function init() {
-  // clear on load
   document.getElementById("result").innerHTML = "";
 
-  // Button clicks
   document.getElementById("calculate").addEventListener("click", calculateBabyPay);
   document.getElementById("return2").addEventListener("click", () => calculateReturnWork(2));
   document.getElementById("return3").addEventListener("click", () => calculateReturnWork(3));
 
-  // After-tax toggle updates current view
   document.getElementById("showAfterTax").addEventListener("change", () => {
-    if (lastAction === 'babyPay') {
-      calculateBabyPay();
-    } else if (lastAction === 'return') {
-      calculateReturnWork(lastReturnDays);
-    }
+    if (lastAction === 'babyPay')      calculateBabyPay();
+    else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
   });
 
-  // Live updates on input/change
   ['userIncome','wifeIncome','paidWeeks'].forEach(id => {
-    document.getElementById(id)
-      .addEventListener('input', () => {
-        if (lastAction === 'babyPay') calculateBabyPay();
-        else if (lastAction === 'return') calculateReturnWork(lastReturnDays);
-      });
-  });
-  ['fullPay','halfPay'].forEach(id => {
-    document.getElementById(id)
-      .addEventListener('change', () => {
-        if (lastAction === 'babyPay') calculateBabyPay();
-        else if (lastAction === 'return') calculateReturnWork(lastReturnDays);
-      });
+    document.getElementById(id).addEventListener('input', () => {
+      if (lastAction === 'babyPay')      calculateBabyPay();
+      else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
+    });
   });
 
-  // Expose closeInfoModal
-  window.closeInfoModal = closeInfoModal;
-  document.getElementById("infoModal").addEventListener("click", e => {
-    if (e.target.id === "infoModal") closeInfoModal();
+  ['fullPay','halfPay'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      if (lastAction === 'babyPay')      calculateBabyPay();
+      else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
+    });
   });
+
+  // Safe infoModal listener (prevents crash)
+  const infoModal = document.getElementById("infoModal");
+  if (infoModal) {
+    infoModal.addEventListener("click", e => {
+      if (e.target.id === "infoModal") closeInfoModal();
+    });
+  }
+
 })();
