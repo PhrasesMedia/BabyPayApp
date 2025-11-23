@@ -54,7 +54,6 @@ function renderBreakdown(
   primaryGross = 0
 ) {
   const labelType  = showAfterTax ? "Net" : "Gross";
-  const totalGross = nonPrimaryGross + primaryGross;
 
   const makeIcon = (grossAmt, tip) => `
     <img
@@ -69,6 +68,7 @@ function renderBreakdown(
 
   return `
     <div style="border:1px solid #ddd;padding:8px;margin:8px 0;border-radius:4px;text-align:left;">
+
       <div style="font-weight:bold;margin-bottom:6px;">${title}</div>
 
       <div style="font-size:12px;margin-bottom:4px;">
@@ -83,7 +83,7 @@ function renderBreakdown(
 
       <div style="font-size:12px;font-weight:bold;margin-bottom:4px;">
         Total: ${formatCurrency(Math.round(totalDisplay))}
-        <!-- Info icon removed on purpose -->
+        <!-- TOTAL: info icon removed by user request -->
       </div>
 
       ${note ? `<div style="font-size:11px;color:#555;">${note}</div>` : ""}
@@ -137,27 +137,22 @@ function attachInfoListeners() {
   }
 }
 
-// ——— Close legacy modal ———
-
-function closeInfoModal() {
-  const el = document.getElementById("infoModal");
-  if (el) el.style.display = "none";
-}
-
-// ——— Product reveal animation ———
+// ——— Product reveal (now delayed 3 seconds) ———
 
 function revealProductSection() {
   const productSection = document.querySelector(".product-section");
   if (!productSection) return;
 
-  if (productSection.style.display === "none") {
-    productSection.style.display = "inline-block";
-    requestAnimationFrame(() => {
+  setTimeout(() => {
+    if (productSection.style.display === "none") {
+      productSection.style.display = "inline-block";
+      requestAnimationFrame(() => {
+        productSection.classList.add("visible");
+      });
+    } else {
       productSection.classList.add("visible");
-    });
-  } else {
-    productSection.classList.add("visible");
-  }
+    }
+  }, 3000); // 3 second delay
 }
 
 // ——— Main calculators ———
