@@ -129,12 +129,14 @@
       line-height: 1.4;
     }
 
-    /* Product Section */
+    /* Product Section – FIXED WIDTH ISSUE */
     .product-section {
       margin-top: 18px;
       text-align: left;
-      max-width: 360px;
       width: 100%;
+      max-width: 600px;   /* fixed squished issue */
+      margin-left: auto;
+      margin-right: auto;
       opacity: 0;
       transform: translateY(4px);
       display: none;
@@ -263,7 +265,7 @@
   </div>
 
   <div class="inline-row">
-    <input id="paidWeeks" type="number" placeholder="Paid leave weeks (Primary Caretaker Only)" />
+    <input id="paidWeeks" type="number" placeholder="Paid Leave Weeks (Primary Caretaker Only)" />
     <div class="pay-type-options">
       <label><input type="checkbox" id="fullPay"> Full</label>
       <label><input type="checkbox" id="halfPay"> Half</label>
