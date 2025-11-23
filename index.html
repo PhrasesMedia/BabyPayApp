@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BabyPay – Parental Leave Estimator</title>
   <link rel="icon" href="icon.png" type="image/png">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -123,17 +124,6 @@
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
-    .breakdown h3 {
-      margin: 0 0 6px 0;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .highlight {
-      font-weight: bold;
-      color: #2e7d32;
-    }
-
     .sponsor {
       margin-top: 10px;
     }
@@ -147,14 +137,10 @@
       border-radius: 6px;
       font-size: 12px;
       font-weight: bold;
-      transition: background-color 0.2s ease;
     }
 
-    .sponsor a:hover {
-      background-color: #EC407A;
-    }
+    /* ⭐ Product Section Styling ⭐ */
 
-    /* ⭐ MINI PRODUCT CARDS + FADE-IN ANIMATION ⭐ */
     .product-section {
       margin-top: 18px;
       text-align: left;
@@ -163,6 +149,7 @@
       opacity: 0;
       transform: translateY(4px);
       transition: opacity 1.1s ease 0.25s, transform 1.1s ease 0.25s;
+      display: none;
     }
 
     .product-section.visible {
@@ -176,7 +163,6 @@
       letter-spacing: 0.06em;
       color: #888;
       margin-bottom: 6px;
-      text-align: left;
     }
 
     .product-card-list {
@@ -191,20 +177,16 @@
       gap: 8px;
       padding: 6px 8px;
       border-radius: 8px;
-      background-color: #ffffff;
+      background-color: #fff;
       border: 1px solid #e5e5e5;
       font-size: 12px;
     }
 
-    .product-card-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #e3f2fd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
+    .product-thumb {
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      object-fit: cover;
     }
 
     .product-card-content {
@@ -241,6 +223,7 @@
 </head>
 
 <body>
+
   <header>
     <img src="icon.png" alt="BabyPay Logo" />
     <h1>BabyPay Estimator</h1>
@@ -289,32 +272,26 @@
     <div class="product-card-list">
 
       <div class="product-card">
-        <div class="product-card-icon">🛒</div>
+        <img src="babypram.png" class="product-thumb" alt="Baby Pram">
         <div class="product-card-content">
           <p class="product-card-title">Pram</p>
-          <a href="https://amzn.to/49Arp6e" target="_blank" class="product-card-link">
-            View on Amazon
-          </a>
+          <a href="https://amzn.to/49Arp6e" target="_blank" class="product-card-link">View on Amazon</a>
         </div>
       </div>
 
       <div class="product-card">
-        <div class="product-card-icon">🚗</div>
+        <img src="babyseat.png" class="product-thumb" alt="Baby Seat">
         <div class="product-card-content">
           <p class="product-card-title">Car Seat</p>
-          <a href="https://amzn.to/3LVURJY" target="_blank" class="product-card-link">
-            View on Amazon
-          </a>
+          <a href="https://amzn.to/3LVURJY" target="_blank" class="product-card-link">View on Amazon</a>
         </div>
       </div>
 
       <div class="product-card">
-        <div class="product-card-icon">🛏️</div>
+        <img src="babybassinet.png" class="product-thumb" alt="Baby Bassinet">
         <div class="product-card-content">
           <p class="product-card-title">Bassinet</p>
-          <a href="https://amzn.to/49Bkuty" target="_blank" class="product-card-link">
-            View on Amazon
-          </a>
+          <a href="https://amzn.to/49Bkuty" target="_blank" class="product-card-link">View on Amazon</a>
         </div>
       </div>
 
@@ -324,33 +301,8 @@
   <p class="disclaimer">
     * BabyPay is for general planning only and does not constitute financial advice.<br>
     These figures are estimates only and should not be considered accurate data.<br>
-    Please confirm all details with your employer, Centrelink, or Services Australia.
+    Please confirm all such details with your employer, Centrelink, or Services Australia.
   </p>
-
-  <!-- ⭐ TAX BREAKDOWN MODAL ⭐ -->
-  <div id="userTaxModal"
-       style="
-         display:none;
-         position:fixed;
-         inset:0;
-         background:rgba(0,0,0,0.4);
-         justify-content:center;
-         align-items:center;
-         z-index:9999;
-       ">
-    <div id="userTaxModalContent"
-         style="
-           background:#fff;
-           padding:16px 20px;
-           border-radius:8px;
-           max-width:320px;
-           width:90%;
-           box-shadow:0 4px 12px rgba(0,0,0,0.15);
-           font-family:Arial,sans-serif;
-         ">
-      <!-- JS fills this -->
-    </div>
-  </div>
 
   <script src="popup.js"></script>
 </body>
