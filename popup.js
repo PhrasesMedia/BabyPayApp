@@ -3,7 +3,7 @@
 // • Renders data on button click or live when inputs change.
 // • Monthly-only tax breakdown in info-modals using original gross values.
 // • “Government Pay (24 weeks)” & “Paid Leave (<n> weeks)” cards.
-// • Government Pay card notes the $915.80/week gross rate.
+// • Government Pay card notes the $948.10/week gross rate.
 // • After-tax toggle re-calculates the view without altering stored gross.
 // ======================================
 
@@ -150,7 +150,7 @@ function calculateBabyPay() {
   const showAfter  = document.getElementById("showAfterTax").checked;
   const payRate    = document.getElementById("fullPay").checked ? 1 : 0.5;
 
-  const govGross   = 915.80 * 52 / 12;
+  const govGross   = 948.10 * 52 / 12;
   const leaveGross = wifeGross * payRate;
 
   const displayUser  = getDisplayIncome(userGross, showAfter);
@@ -163,7 +163,7 @@ function calculateBabyPay() {
       displayUser,
       displayGov,
       displayUser + displayGov,
-      "Government payment rate: $915.80 per week (gross)",
+      "Government payment rate: $948.80 per week (gross)",
       showAfter,
       true,
       userGross,
