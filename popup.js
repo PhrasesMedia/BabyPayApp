@@ -70,18 +70,22 @@ function renderBreakdown(
   return `
     <div style="border:1px solid #ddd;padding:8px;margin:8px 0;border-radius:4px;text-align:left;">
       <div style="font-weight:bold;margin-bottom:6px;">${title}</div>
+
       <div style="font-size:12px;margin-bottom:4px;">
         Non-Primary (${labelType}): ${formatCurrency(Math.round(nonPrimaryDisplay))}
         ${hasInfo ? makeIcon(nonPrimaryGross, `${labelType} Non-Primary`) : ""}
       </div>
+
       <div style="font-size:12px;margin-bottom:4px;">
         Primary (${labelType}): ${formatCurrency(Math.round(primaryDisplay))}
         ${hasInfo ? makeIcon(primaryGross, `${labelType} Primary`) : ""}
       </div>
+
       <div style="font-size:12px;font-weight:bold;margin-bottom:4px;">
         Total: ${formatCurrency(Math.round(totalDisplay))}
-        ${hasInfo ? makeIcon(totalGross, "Total = Non-Primary + Primary") : ""}
+        <!-- Info icon removed on purpose -->
       </div>
+
       ${note ? `<div style="font-size:11px;color:#555;">${note}</div>` : ""}
     </div>
   `;
@@ -133,14 +137,14 @@ function attachInfoListeners() {
   }
 }
 
-// ——— Close the built-in Government-pay modal (legacy, safe) ———
+// ——— Close legacy modal ———
 
 function closeInfoModal() {
   const el = document.getElementById("infoModal");
   if (el) el.style.display = "none";
 }
 
-// ——— Helper: reveal product section with fade-in ———
+// ——— Product reveal animation ———
 
 function revealProductSection() {
   const productSection = document.querySelector(".product-section");
