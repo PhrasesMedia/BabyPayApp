@@ -211,7 +211,7 @@ function calculateReturnWork(days) {
   const userGross   = parseFloat(document.getElementById("userIncome").value) || 0;
   const wifeMonthly = parseFloat(document.getElementById("wifeIncome").value)  || 0;
   const showAfter   = document.getElementById("showAfterTax").checked;
-  const dayGross    = (wifeMonthly * days) / 5;
+  const dayGross    = (wifeMonthly * days) / 5;   // pro-rata based on days per week
 
   const displayUser = getDisplayIncome(userGross, showAfter);
   const displayWife = getDisplayIncome(dayGross, showAfter);
@@ -240,6 +240,7 @@ function calculateReturnWork(days) {
   document.getElementById("calculate").addEventListener("click", calculateBabyPay);
   document.getElementById("return2").addEventListener("click", () => calculateReturnWork(2));
   document.getElementById("return3").addEventListener("click", () => calculateReturnWork(3));
+  document.getElementById("return4").addEventListener("click", () => calculateReturnWork(4));
 
   document.getElementById("showAfterTax").addEventListener("change", () => {
     if (lastAction === 'babyPay')      calculateBabyPay();
