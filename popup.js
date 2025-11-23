@@ -93,6 +93,9 @@ function attachInfoListeners() {
       const modal   = document.getElementById("userTaxModal");
       const content = document.getElementById("userTaxModalContent");
 
+      // If the modal/content elements don't exist, just bail out safely
+      if (!modal || !content) return;
+
       content.innerHTML = `
         <h3 style="margin:0 0 8px;font-size:15px;">Tax Breakdown</h3>
         <p style="margin:0;font-size:13px;line-height:1.4;">
