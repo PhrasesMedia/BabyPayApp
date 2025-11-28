@@ -1,38 +1,20 @@
 // ======================================
-// popup.js (BabyPay v5.0 – frequency + Medicare levy + PDF logo + weekly column)
-// • User can enter income as Monthly / Fortnightly / Weekly.
-// • Internally everything converts to monthly for tax + BabyPay logic.
-// • PDF calendar includes BabyPay logo + Weekly Amount column.
+// popup.js (BabyPay v3.9 + Medicare levy)
+// • Renders data on button click or live when inputs change.
+// • Monthly-only tax breakdown in info-modals using original gross values.
+// • “Government Pay (24 weeks)” & “Paid Leave (<n> weeks)” cards.
+// • Government Pay card notes the $948.10/week gross rate.
+// • After-tax includes income tax + 2% Medicare levy.
 // ======================================
 
 let lastAction = null;      // 'babyPay' or 'return'
 let lastReturnDays = null;  // stores days for return-to-work
-let logoDataUrl = null;     // cached BabyPay logo for PDF
 
 // ——— Utility functions ———
 
 // Format a number into “$X,XXX/month”
 function formatCurrency(amount) {
   return "$" + amount.toLocaleString(undefined, { maximumFractionDigits: 0 }) + "/month";
-}
-
-// Format a number into “$X,XXX/week”
-function formatCurrencyWeek(amount) {
-  return "$" + amount.toLocaleString(undefined, { maximumFractionDigits: 0 }) + "/week";
-}
-
-// Convert a raw income based on selected frequency into monthly
-function toMonthly(amount, frequency) {
-  if (!amount) return 0;
-  switch (frequency) {
-    case "weekly":
-      return amount * 52 / 12;
-    case "fortnightly":
-      return amount * 26 / 12;
-    case "monthly":
-    default:
-      return amount;
-  }
 }
 
 // Australian income tax brackets (annual → income tax only, no Medicare)
@@ -101,6 +83,7 @@ function renderBreakdown(
 
       <div style="font-size:12px;font-weight:bold;margin-bottom:4px;">
         Total: ${formatCurrency(Math.round(totalDisplay))}
+        <!-- TOTAL: info icon removed by user request -->
       </div>
 
       ${note ? `<div style="font-size:11px;color:#555;">${note}</div>` : ""}
@@ -154,7 +137,7 @@ function attachInfoListeners() {
   }
 }
 
-// ——— Product reveal (delayed) ———
+// ——— Product reveal (now delayed 3 seconds) ———
 
 function revealProductSection() {
   const productSection = document.querySelector(".product-section");
@@ -169,158 +152,7 @@ function revealProductSection() {
     } else {
       productSection.classList.add("visible");
     }
-  }, 3000);
-}
-
-// ——— Helper functions for dates (PDF calendar) ———
-
-function addDays(date, days) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + days);
-  return d;
-}
-
-function formatDateShort(d) {
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
-}
-
-// ——— Preload BabyPay logo for PDF ———
-
-function preloadLogo() {
-  try {
-    const img = new Image();
-    img.src = "icon.png";
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      logoDataUrl = canvas.toDataURL("image/png");
-    };
-  } catch (e) {
-    logoDataUrl = null;
-  }
-}
-
-// ——— PDF calendar generator ———
-
-function generatePDFCalendar(govWeeks, paidWeeks, userMonthlyGross, wifeMonthlyGross, showAfterTax) {
-  if (!window.jspdf || !window.jspdf.jsPDF) {
-    alert("PDF library failed to load. Please check your connection and try again.");
-    return;
-  }
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-
-  const govWeeksInt  = parseInt(govWeeks || 24, 10) || 24;
-  const paidWeeksInt = Math.max(0, Math.round(paidWeeks || 0));
-
-  const today     = new Date();
-  const govStart  = new Date(today);
-  const govEnd    = addDays(govStart, govWeeksInt * 7 - 1);
-  const paidStart = addDays(govEnd, 1);
-  const paidEnd   = addDays(paidStart, paidWeeksInt * 7 - 1);
-
-  const govMonthlyGross = 948.10 * 52 / 12;
-  const govDisplay      = getDisplayIncome(govMonthlyGross,   showAfterTax);
-  const userDisplay     = getDisplayIncome(userMonthlyGross,  showAfterTax);
-  const wifeDisplay     = getDisplayIncome(wifeMonthlyGross,  showAfterTax);
-  const labelType       = showAfterTax ? "Net" : "Gross";
-
-  const weeklyGovAmount  = (userDisplay + govDisplay)  * 12 / 52;
-  const weeklyPaidAmount = (userDisplay + wifeDisplay) * 12 / 52;
-
-  // Logo in top-right
-  if (logoDataUrl) {
-    doc.addImage(logoDataUrl, "PNG", 170, 8, 22, 22);
-  }
-
-  // Title + summary
-  doc.setFontSize(18);
-  doc.text("BabyPay – Parental Leave Calendar", 14, 18);
-
-  doc.setFontSize(11);
-  doc.text(`Generated on: ${today.toDateString()}`, 14, 28);
-  doc.text(`Assumed start date for Government Pay: ${today.toDateString()}`, 14, 34);
-
-  doc.setFontSize(12);
-  doc.text(
-    `Government Pay (24 weeks): ${formatDateShort(govStart)} → ${formatDateShort(govEnd)}`,
-    14,
-    46
-  );
-  doc.text(
-    `Paid Leave (${paidWeeksInt} weeks): ${formatDateShort(paidStart)} → ${formatDateShort(paidEnd)}`,
-    14,
-    53
-  );
-
-  doc.text(
-    `Non-Primary (${labelType} monthly): ${formatCurrency(Math.round(userDisplay))}`,
-    14,
-    63
-  );
-  doc.text(
-    `Primary (${labelType} monthly during Paid Leave): ${formatCurrency(Math.round(wifeDisplay))}`,
-    14,
-    70
-  );
-
-  // Weekly rows
-  const rows = [];
-  for (let i = 0; i < govWeeksInt; i++) {
-    const wStart = addDays(govStart, i * 7);
-    const wEnd   = addDays(wStart, 6);
-    rows.push([
-      String(i + 1),
-      "Government Pay",
-      formatDateShort(wStart),
-      formatDateShort(wEnd),
-      formatCurrencyWeek(Math.round(weeklyGovAmount))
-    ]);
-  }
-
-  for (let j = 0; j < paidWeeksInt; j++) {
-    const index = govWeeksInt + j + 1;
-    const wStart = addDays(paidStart, j * 7);
-    const wEnd   = addDays(wStart, 6);
-    rows.push([
-      String(index),
-      "Paid Leave",
-      formatDateShort(wStart),
-      formatDateShort(wEnd),
-      formatCurrencyWeek(Math.round(weeklyPaidAmount))
-    ]);
-  }
-
-  doc.autoTable({
-    startY: 80,
-    head: [["Week #", "Type", "Start", "End", "Weekly Amount"]],
-    body: rows,
-    styles: { fontSize: 9, cellPadding: 2 },
-    headStyles: {
-      fillColor: [33, 150, 243],
-      textColor: 255,
-      halign: "center"
-    },
-    alternateRowStyles: {
-      fillColor: [245, 245, 245]
-    },
-    columnStyles: {
-      0: { halign: "center", cellWidth: 15 },
-      1: { cellWidth: 35 },
-      2: { cellWidth: 30 },
-      3: { cellWidth: 30 },
-      4: { cellWidth: 35 }
-    }
-  });
-
-  doc.save("BabyPay_Maternity_Calendar.pdf");
+  }, 3000); // 3 second delay
 }
 
 // ——— Main calculators ———
@@ -329,23 +161,18 @@ function calculateBabyPay() {
   lastAction = 'babyPay';
   revealProductSection();
 
-  const freq      = document.getElementById("payFrequency").value || "monthly";
+  const userGross  = parseFloat(document.getElementById("userIncome").value) || 0;
+  const wifeGross  = parseFloat(document.getElementById("wifeIncome").value)  || 0;
+  const paidWeeks  = parseFloat(document.getElementById("paidWeeks").value)   || 0;
+  const showAfter  = document.getElementById("showAfterTax").checked;
+  const payRate    = document.getElementById("fullPay").checked ? 1 : 0.5;
 
-  const userRaw   = parseFloat(document.getElementById("userIncome").value) || 0;
-  const wifeRaw   = parseFloat(document.getElementById("wifeIncome").value) || 0;
-  const paidWeeks = parseFloat(document.getElementById("paidWeeks").value)  || 0;
-  const showAfter = document.getElementById("showAfterTax").checked;
-  const payRate   = document.getElementById("fullPay").checked ? 1 : 0.5;
+  const govGross   = 948.10 * 52 / 12;   // Government PPL monthly gross
+  const leaveGross = wifeGross * payRate;
 
-  const userMonthly  = toMonthly(userRaw, freq);
-  const wifeMonthly  = toMonthly(wifeRaw, freq);
-
-  const govMonthly   = 948.10 * 52 / 12;   // Government PPL monthly gross
-  const leaveMonthly = wifeMonthly * payRate;
-
-  const displayUser  = getDisplayIncome(userMonthly,  showAfter);
-  const displayGov   = getDisplayIncome(govMonthly,   showAfter);
-  const displayLeave = getDisplayIncome(leaveMonthly, showAfter);
+  const displayUser  = getDisplayIncome(userGross, showAfter);
+  const displayGov   = getDisplayIncome(govGross, showAfter);
+  const displayLeave = getDisplayIncome(leaveGross, showAfter);
 
   document.getElementById("result").innerHTML =
     renderBreakdown(
@@ -356,8 +183,8 @@ function calculateBabyPay() {
       "Government payment rate: $948.10 per week (gross)",
       showAfter,
       true,
-      userMonthly,
-      govMonthly
+      userGross,
+      govGross
     ) +
     renderBreakdown(
       `Paid Leave (${paidWeeks} weeks)`,
@@ -367,22 +194,11 @@ function calculateBabyPay() {
       "Non-primary caretaker remains at work; salary is unchanged.",
       showAfter,
       true,
-      userMonthly,
-      leaveMonthly
+      userGross,
+      leaveGross
     );
 
   attachInfoListeners();
-
-  // Update PDF button dataset with MONTHLY values
-  const downloadBtn = document.getElementById("downloadCalendar");
-  if (downloadBtn) {
-    downloadBtn.style.display = "block";
-    downloadBtn.dataset.govWeeks      = "24";
-    downloadBtn.dataset.paidWeeks     = isNaN(paidWeeks) ? "0" : String(paidWeeks);
-    downloadBtn.dataset.userGross     = String(userMonthly);
-    downloadBtn.dataset.wifeGross     = String(leaveMonthly);
-    downloadBtn.dataset.showAfterTax  = showAfter ? "1" : "0";
-  }
 }
 
 function calculateReturnWork(days) {
@@ -391,19 +207,13 @@ function calculateReturnWork(days) {
 
   revealProductSection();
 
-  const freq        = document.getElementById("payFrequency").value || "monthly";
-
-  const userRaw     = parseFloat(document.getElementById("userIncome").value) || 0;
-  const wifeRaw     = parseFloat(document.getElementById("wifeIncome").value) || 0;
+  const userGross   = parseFloat(document.getElementById("userIncome").value) || 0;
+  const wifeMonthly = parseFloat(document.getElementById("wifeIncome").value)  || 0;
   const showAfter   = document.getElementById("showAfterTax").checked;
+  const dayGross    = (wifeMonthly * days) / 5;   // pro-rata based on days per week
 
-  const userMonthly = toMonthly(userRaw, freq);
-  const wifeMonthly = toMonthly(wifeRaw, freq);
-
-  const dayGross    = (wifeMonthly * days) / 5;   // pro-rata
-
-  const displayUser = getDisplayIncome(userMonthly, showAfter);
-  const displayWife = getDisplayIncome(dayGross,    showAfter);
+  const displayUser = getDisplayIncome(userGross, showAfter);
+  const displayWife = getDisplayIncome(dayGross, showAfter);
 
   document.getElementById("result").innerHTML =
     renderBreakdown(
@@ -414,7 +224,7 @@ function calculateReturnWork(days) {
       "(Non-primary caretaker continues full salary.)",
       showAfter,
       true,
-      userMonthly,
+      userGross,
       dayGross
     );
 
@@ -426,8 +236,6 @@ function calculateReturnWork(days) {
 (function init() {
   document.getElementById("result").innerHTML = "";
 
-  preloadLogo();
-
   document.getElementById("calculate").addEventListener("click", calculateBabyPay);
   document.getElementById("return2").addEventListener("click", () => calculateReturnWork(2));
   document.getElementById("return3").addEventListener("click", () => calculateReturnWork(3));
@@ -438,44 +246,25 @@ function calculateReturnWork(days) {
     else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
   });
 
-  ['userIncome','wifeIncome','paidWeeks','payFrequency'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const evt = (id === 'payFrequency') ? 'change' : 'input';
-    el.addEventListener(evt, () => {
+  ['userIncome','wifeIncome','paidWeeks'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
       if (lastAction === 'babyPay')      calculateBabyPay();
       else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
     });
   });
 
   ['fullPay','halfPay'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('change', () => {
+    document.getElementById(id).addEventListener('change', () => {
       if (lastAction === 'babyPay')      calculateBabyPay();
       else if (lastAction === 'return')  calculateReturnWork(lastReturnDays);
     });
   });
 
-  // Legacy modal safety
+  // Safe legacy infoModal listener (if it exists)
   const infoModal = document.getElementById("infoModal");
   if (infoModal) {
     infoModal.addEventListener("click", e => {
       if (e.target.id === "infoModal") closeInfoModal();
-    });
-  }
-
-  // Download calendar button handler
-  const downloadBtn = document.getElementById("downloadCalendar");
-  if (downloadBtn) {
-    downloadBtn.addEventListener("click", () => {
-      const govWeeks   = parseInt(downloadBtn.dataset.govWeeks || "24", 10);
-      const paidWeeks  = parseFloat(downloadBtn.dataset.paidWeeks || "0");
-      const userGross  = parseFloat(downloadBtn.dataset.userGross || "0");
-      const wifeGross  = parseFloat(downloadBtn.dataset.wifeGross || "0");
-      const showAfter  = downloadBtn.dataset.showAfterTax === "1";
-
-      generatePDFCalendar(govWeeks, paidWeeks, userGross, wifeGross, showAfter);
     });
   }
 })();

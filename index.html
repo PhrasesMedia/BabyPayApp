@@ -15,10 +15,6 @@
     gtag('config', 'G-4BB529LTKE');
   </script>
 
-  <!-- jsPDF + AutoTable for PDF calendar generation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -101,26 +97,6 @@
       margin-bottom: 10px;
     }
 
-    .frequency-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin: 6px 0 14px 0;
-      font-size: 12px;
-    }
-
-    .frequency-row label {
-      font-weight: bold;
-    }
-
-    .frequency-row select {
-      padding: 4px 6px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-size: 12px;
-    }
-
     button {
       padding: 10px 16px;
       width: 100%;
@@ -140,15 +116,6 @@
       background-color: #1976D2;
     }
 
-    /* Special styling for the PDF download button */
-    #downloadCalendar {
-      background-color: #4CAF50;
-    }
-
-    #downloadCalendar:hover {
-      background-color: #388E3C;
-    }
-
     #result {
       margin-top: 12px;
       font-size: 13px;
@@ -162,7 +129,7 @@
       line-height: 1.4;
     }
 
-    /* Product Section */
+    /* Product Section – FIXED WIDTH ISSUE */
     .product-section {
       margin-top: 18px;
       text-align: left;
@@ -307,22 +274,12 @@
 
   <div class="input-group">
     <span>$</span>
-    <input id="userIncome" type="number" placeholder="Non Primary Caretaker (Gross)" />
+    <input id="userIncome" type="number" placeholder="Non Primary Caretaker (Gross Monthly)" />
   </div>
 
   <div class="input-group">
     <span>$</span>
-    <input id="wifeIncome" type="number" placeholder="Primary Caretaker (Gross)" />
-  </div>
-
-  <!-- NEW: Income frequency selector -->
-  <div class="frequency-row">
-    <label for="payFrequency">Income frequency:</label>
-    <select id="payFrequency">
-      <option value="monthly" selected>Monthly</option>
-      <option value="fortnightly">Fortnightly</option>
-      <option value="weekly">Weekly</option>
-    </select>
+    <input id="wifeIncome" type="number" placeholder="Primary Caretaker (Gross Monthly)" />
   </div>
 
   <div class="inline-row">
@@ -344,11 +301,6 @@
   <button id="return2">Return to Work - 2 Days</button>
   <button id="return3">Return to Work - 3 Days</button>
   <button id="return4">Return to Work - 4 Days</button>
-
-  <!-- PDF calendar button (shown after first calculation) -->
-  <button id="downloadCalendar" style="display:none;">
-    Download Maternity Calendar (PDF)
-  </button>
 
   <div id="result"></div>
 
