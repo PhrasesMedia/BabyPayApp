@@ -210,11 +210,11 @@ function calculateBabyPay() {
 
   document.getElementById("result").innerHTML =
     renderBreakdown(
-      "Government Pay (21 weeks)",   // <-- label only
+      "Government Pay (21 weeks)",
       displayUserMonthly,
       displayGovMonthly,
       displayUserMonthly + displayGovMonthly,
-      "Government payment rate: $948.10 per week (gross)",
+      "Government payment rate: $948.10 per week (gross).<br>Non-primary caretaker remains at work; salary is unchanged.",
       showAfter,
       true,
       userGrossMonthly,
