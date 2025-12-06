@@ -1,93 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>You're Subscribed — BabyPay</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscription Confirmed – BabyPay</title>
+
+  <!-- BabyPay Favicon (optional if you have icon.png) -->
+  <link rel="icon" type="image/png" href="icon.png">
 
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: #f7f7f7;
       margin: 0;
       padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #fafafa;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      text-align: center;
       color: #333;
     }
 
     .card {
       background: white;
-      padding: 32px 28px;
-      border-radius: 14px;
-      max-width: 420px;
+      padding: 40px 32px;
+      max-width: 460px;
       width: 90%;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
 
     .logo {
-      width: 80px;
+      width: 70px;
       margin-bottom: 12px;
     }
 
     h1 {
-      font-size: 26px;
-      margin-bottom: 8px;
+      margin-top: 0;
+      font-size: 24px;
+      font-weight: 700;
       color: #222;
     }
 
     p {
       font-size: 15px;
       line-height: 1.6;
+      color: #555;
+      margin: 12px 0;
     }
 
-    .btn {
+    .return-btn {
       display: inline-block;
-      margin-top: 18px;
-      padding: 12px 18px;
       background: #F3E3B0;
       color: #5A4B24;
+      padding: 12px 24px;
+      font-size: 15px;
       font-weight: bold;
-      border-radius: 8px;
+      border-radius: 6px;
       text-decoration: none;
-      transition: background 0.25s;
+      margin-top: 18px;
+      transition: background 0.25s ease;
     }
 
-    .btn:hover {
+    .return-btn:hover {
       background: #E9D89E;
     }
 
     .footer {
-      margin-top: 18px;
+      margin-top: 20px;
       font-size: 12px;
-      color: #777;
+      color: #999;
     }
   </style>
 </head>
 
 <body>
+
   <div class="card">
-    <img src="icon.png" alt="BabyPay Logo" class="logo">
+    <img src="icon.png" alt="BabyPay logo" class="logo">
 
     <h1>You're subscribed! 🎉</h1>
+
     <p>Thanks for confirming your email — you're officially part of the BabyPay community.</p>
 
     <p>You’ll now receive updates on new tools, improvements, and features to help plan parental leave with clarity and confidence.</p>
 
-    <a href="/BabyPayApp/" class="btn">Return to BabyPay</a>
+    <a href="https://babypay.com.au" class="return-btn">
+      Return to BabyPay
+    </a>
 
     <div class="footer">
       BabyPay — Helping expecting parents plan with clarity.
     </div>
   </div>
+
 </body>
 </html>
