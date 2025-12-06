@@ -398,6 +398,12 @@
     <a href="privacy.html">Privacy Policy</a>
   </div>
 
+  <!-- Hidden iframe for silent Buttondown submit -->
+  <iframe
+    name="bdIframe"
+    style="display:none; width:0; height:0; border:0;"
+  ></iframe>
+
   <!-- Subscribe Modal -->
   <div id="subscribeModal">
     <div style="
@@ -414,21 +420,23 @@
         Receive updates, improvements, and new features. Unsubscribe any time.
       </p>
 
-      <!-- Direct Buttondown embed form (no API key, no backend) -->
+      <!-- Direct Buttondown embed form (no API key, no backend, silent submit) -->
       <form
-        action="https://buttondown.com/api/emails/embed-subscribe/frazer"
+        id="subscribeForm"
+        action="https://buttondown.email/api/emails/embed-subscribe/frazer"
         method="post"
-        target="_blank"
+        target="bdIframe"
       >
         <input
           type="email"
           name="email"
+          id="subscribeEmail"
           placeholder="you@example.com"
           required
           style="width:100%; padding:8px; margin-bottom:6px; box-sizing:border-box;"
         />
         <input type="hidden" name="embed" value="1" />
-        <button type="submit" style="
+        <button type="submit" id="subscribeSubmitBtn" style="
           width:100%;
           padding:10px;
           background:#F3E3B0;
@@ -440,6 +448,8 @@
           Subscribe
         </button>
       </form>
+
+      <p id="subscribeStatus" style="font-size:12px; color:#555; margin-top:6px;"></p>
 
       <button
         id="closeSubscribeModal"
@@ -458,17 +468,22 @@
     </div>
   </div>
 
-  <!-- Modal wiring (no API keys, no fetch) -->
+  <!-- Modal + subscribe wiring -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const subscribeBtn = document.getElementById("subscribeBtn");
       const modal = document.getElementById("subscribeModal");
       const closeBtn = document.getElementById("closeSubscribeModal");
+      const form = document.getElementById("subscribeForm");
+      const emailInput = document.getElementById("subscribeEmail");
+      const statusEl = document.getElementById("subscribeStatus");
+      const submitBtn = document.getElementById("subscribeSubmitBtn");
 
-      if (!subscribeBtn || !modal || !closeBtn) return;
+      if (!subscribeBtn || !modal || !closeBtn || !form) return;
 
       const openModal = () => {
         modal.style.display = "flex";
+        statusEl.textContent = "";
       };
 
       const closeModal = () => {
@@ -480,6 +495,26 @@
 
       modal.addEventListener("click", (e) => {
         if (e.target === modal) closeModal();
+      });
+
+      // Silent subscribe: optimistic success message after submit
+      form.addEventListener("submit", () => {
+        statusEl.style.color = "#555";
+        statusEl.textContent = "Subscribing...";
+        submitBtn.disabled = true;
+
+        // Give Buttondown a moment to receive the request, then show success
+        setTimeout(() => {
+          statusEl.style.color = "#1b7c2f";
+          statusEl.textContent =
+            "Thanks! Please check your inbox to confirm your subscription.";
+          emailInput.value = "";
+        }, 800);
+
+        // Re-enable button later in case they want to try again
+        setTimeout(() => {
+          submitBtn.disabled = false;
+        }, 3000);
       });
     });
   </script>
