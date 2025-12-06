@@ -6,17 +6,6 @@
   <title>BabyPay – Parental Leave Estimator</title>
   <link rel="icon" href="icon.png" type="image/png" />
 
-  <!-- (Optional) Google Analytics – keep or remove as you wish -->
-  <!--
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4BB529LTKE"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-4BB529LTKE');
-  </script>
-  -->
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -255,33 +244,7 @@
       background-color: #EC407A;
     }
 
-    /* Info Modal for tax breakdown */
-    #userTaxModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.55);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    #userTaxModalContent {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      width: 280px;
-      text-align: left;
-      font-size: 13px;
-    }
-
-    .info-icon {
-      cursor: pointer;
-    }
-
+    /* Footer */
     .footer-links {
       margin-top: 18px;
       font-size: 11px;
@@ -319,13 +282,14 @@
     <input id="wifeIncome" type="number" placeholder="Primary Caretaker (Gross Monthly)" />
   </div>
 
+  <!-- Paid leave + Full/Half Pay selectors -->
   <div class="inline-row">
     <input id="paidWeeks" type="number" placeholder="Paid Leave Weeks (Primary Caretaker Only)" />
     <div class="pay-type-options">
-  <label><input type="checkbox" id="fullPay"> Full Pay</label>
-  <label><input type="checkbox" id="halfPay"> Half Pay</label>
-</div>
-
+      <label><input type="checkbox" id="fullPay"> Full Pay</label>
+      <label><input type="checkbox" id="halfPay"> Half Pay</label>
+    </div>
+  </div>
 
   <!-- After-tax + frequency row -->
   <div class="tax-toggle">
@@ -350,30 +314,30 @@
   <button id="calculate">BabyPay</button>
   <button id="return2">Return to Work - 2 Days</button>
   <button id="return3">Return to Work - 3 Days</button>
-  <button id="return4">Return to Work - 4 Days </button>
+  <button id="return4">Return to Work - 4 Days</button>
 
-  <!-- Subscribe button (replaces Send Summary) -->
+  <!-- Subscribe button (updated hover + colour) -->
   <button id="subscribeBtn" style="
-  background:#F3E3B0;
-  color:#5A4B24;
-  font-weight:bold;
-  border-radius:6px;
-  transition: background 0.25s ease;
-"
-onmouseover="this.style.background='#E9D89E'"
-onmouseout="this.style.background='#F3E3B0'">
-  Subscribe for BabyPay Updates
-</button>
+    background:#F3E3B0;
+    color:#5A4B24;
+    font-weight:bold;
+    border-radius:6px;
+    transition: background 0.25s ease;
+  "
+    onmouseover="this.style.background='#E9D89E'"
+    onmouseout="this.style.background='#F3E3B0'">
+    Subscribe for BabyPay Updates
+  </button>
 
-
-  <!-- Results area -->
+  <!-- Results -->
   <div id="result"></div>
 
-  <!-- Support + affiliate section -->
+  <!-- Support -->
   <div class="sponsor">
     <a href="https://ko-fi.com/babypay" target="_blank">&#10084; Support BabyPay</a>
   </div>
 
+  <!-- Affiliate Section -->
   <div class="product-section" style="display:none;">
     <div class="product-section-title">Recommended by BabyPay (Affiliate)</div>
     <div class="product-card-list">
@@ -408,21 +372,17 @@ onmouseout="this.style.background='#F3E3B0'">
     </div>
   </div>
 
+  <!-- Disclaimer -->
   <p class="disclaimer">
     * BabyPay is for general planning only and does not constitute financial advice.<br>
-    These figures are estimates only and should not be considered accurate data.<br>
-    Please confirm all details with your employer, Centrelink, or Services Australia.
+    These figures are estimates only and may not reflect your actual income.<br>
+    Please confirm details with your employer or Services Australia.
   </p>
 
-  <!-- Footer: Terms + Privacy -->
+  <!-- Footer -->
   <div class="footer-links">
     <a href="terms.html">Terms &amp; Conditions</a> •
     <a href="privacy.html">Privacy Policy</a>
-  </div>
-
-  <!-- Tax Breakdown Modal -->
-  <div id="userTaxModal">
-    <div id="userTaxModalContent"></div>
   </div>
 
   <!-- Subscribe Modal -->
@@ -446,7 +406,7 @@ onmouseout="this.style.background='#F3E3B0'">
     ">
       <h3 style="margin-top:0;">Join the BabyPay Mailing List</h3>
       <p style="font-size:13px; margin-bottom:10px;">
-        Receive updates, new features and improvements. Unsubscribe any time.
+        Receive updates, improvements, and new features.<br>Unsubscribe anytime.
       </p>
 
       <form id="subscribeForm">
@@ -457,6 +417,7 @@ onmouseout="this.style.background='#F3E3B0'">
           required
           style="width:100%; padding:8px; margin-bottom:6px; box-sizing:border-box;"
         />
+
         <button type="submit" style="
           width:100%;
           padding:10px;
@@ -487,64 +448,54 @@ onmouseout="this.style.background='#F3E3B0'">
     </div>
   </div>
 
-  <!-- Frontend wiring for Subscribe – email-only (no salary data sent) -->
+  <!-- Subscribe logic -->
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const subscribeBtn = document.getElementById("subscribeBtn");
-    const modal = document.getElementById("subscribeModal");
-    const closeBtn = document.getElementById("closeSubscribeModal");
-    const form = document.getElementById("subscribeForm");
+    document.addEventListener("DOMContentLoaded", () => {
+      const subscribeBtn = document.getElementById("subscribeBtn");
+      const modal = document.getElementById("subscribeModal");
+      const closeBtn = document.getElementById("closeSubscribeModal");
+      const form = document.getElementById("subscribeForm");
 
-    if (!subscribeBtn || !modal || !closeBtn || !form) {
-      return;
-    }
+      // Open modal
+      subscribeBtn.addEventListener("click", () => {
+        modal.style.display = "flex";
+      });
 
-    // Open modal
-    subscribeBtn.addEventListener("click", () => {
-      modal.style.display = "flex";
-    });
+      // Close modal
+      const closeModal = () => modal.style.display = "none";
+      closeBtn.addEventListener("click", closeModal);
+      modal.addEventListener("click", e => {
+        if (e.target === modal) closeModal();
+      });
 
-    // Close helpers
-    const closeModal = () => {
-      modal.style.display = "none";
-    };
+      // Handle subscription
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    closeBtn.addEventListener("click", closeModal);
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
+        const emailInput = document.getElementById("subscribeEmail");
+        const email = emailInput.value.trim();
+        if (!email) return;
 
-    // Handle subscribe (email only)
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const emailInput = document.getElementById("subscribeEmail");
-      const email = emailInput.value.trim();
-      if (!email) return;
+        try {
+          const res = await fetch("https://ancient-forest-4a66.phrasesmedia.workers.dev/subscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+          });
 
-      try {
-        const res = await fetch("https://ancient-forest-4a66.phrasesmedia.workers.dev/subscribe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email })
-        });
+          if (!res.ok) throw new Error();
 
-        if (!res.ok) {
-          throw new Error("Subscribe failed");
+          alert("You're subscribed! 🎉");
+          emailInput.value = "";
+          closeModal();
+        } catch (err) {
+          alert("Couldn't subscribe right now, please try again later.");
         }
-
-        alert("You're subscribed! 🎉");
-        emailInput.value = "";
-        closeModal();
-      } catch (err) {
-        console.error(err);
-        alert("Couldn't subscribe right now, please try again later.");
-      }
+      });
     });
-  });
   </script>
 
-  <!-- Scripts -->
   <script src="popup.js"></script>
-  <!-- calendar-pdf.js removed now that we use email summaries instead -->
+
 </body>
 </html>
