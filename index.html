@@ -154,7 +154,6 @@
       line-height: 1.4;
     }
 
-    /* Product Section */
     .product-section {
       margin-top: 18px;
       text-align: left;
@@ -274,7 +273,6 @@
       color: #444;
     }
 
-    /* Subscribe modal overlay */
     #subscribeModal {
       display: none;
       position: fixed;
@@ -294,7 +292,6 @@
     <p class="subtitle">Plan your parental leave income with clarity</p>
   </header>
 
-  <!-- Income inputs -->
   <div class="input-group">
     <span>$</span>
     <input id="userIncome" type="number" placeholder="Non Primary Caretaker (Gross Monthly)" />
@@ -305,7 +302,6 @@
     <input id="wifeIncome" type="number" placeholder="Primary Caretaker (Gross Monthly)" />
   </div>
 
-  <!-- Paid leave + Full/Half Pay selectors -->
   <div class="inline-row">
     <input id="paidWeeks" type="number" placeholder="Paid Leave Weeks (Primary Caretaker Only)" />
     <div class="pay-type-options">
@@ -314,7 +310,6 @@
     </div>
   </div>
 
-  <!-- After-tax + frequency row -->
   <div class="tax-toggle">
     <div class="tax-toggle-row">
       <label>
@@ -333,21 +328,17 @@
     </div>
   </div>
 
-  <!-- Action buttons -->
   <button id="calculate">BabyPay</button>
   <button id="return2">Return to Work - 2 Days</button>
   <button id="return3">Return to Work - 3 Days</button>
   <button id="return4">Return to Work - 4 Days</button>
 
-  <!-- Subscribe button – opens popup modal -->
   <button id="subscribeBtn">
     Subscribe for BabyPay Updates
   </button>
 
-  <!-- Results area -->
   <div id="result"></div>
 
-  <!-- Support + affiliate section -->
   <div class="sponsor">
     <a href="https://ko-fi.com/babypay" target="_blank">&#10084; Support BabyPay</a>
   </div>
@@ -392,19 +383,17 @@
     Please confirm details with your employer or Services Australia.
   </p>
 
-  <!-- Footer: Terms + Privacy -->
   <div class="footer-links">
     <a href="terms.html">Terms &amp; Conditions</a> •
     <a href="privacy.html">Privacy Policy</a>
   </div>
 
-  <!-- Hidden iframe for silent Buttondown submit -->
   <iframe
     name="bdIframe"
     style="display:none; width:0; height:0; border:0;"
   ></iframe>
 
-  <!-- Subscribe Modal -->
+  <!-- ✅ FIXED: Updated to /babypay instead of /frazer -->
   <div id="subscribeModal">
     <div style="
       background:#fff;
@@ -420,10 +409,9 @@
         Receive updates, improvements, and new features. Unsubscribe any time.
       </p>
 
-      <!-- Direct Buttondown embed form (no API key, no backend, silent submit) -->
       <form
         id="subscribeForm"
-        action="https://buttondown.email/api/emails/embed-subscribe/frazer"
+        action="https://buttondown.email/api/emails/embed-subscribe/babypay"
         method="post"
         target="bdIframe"
       >
@@ -468,7 +456,6 @@
     </div>
   </div>
 
-  <!-- Modal + subscribe wiring -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const subscribeBtn = document.getElementById("subscribeBtn");
@@ -497,13 +484,11 @@
         if (e.target === modal) closeModal();
       });
 
-      // Silent subscribe: optimistic success message after submit
       form.addEventListener("submit", () => {
         statusEl.style.color = "#555";
         statusEl.textContent = "Subscribing...";
         submitBtn.disabled = true;
 
-        // Give Buttondown a moment to receive the request, then show success
         setTimeout(() => {
           statusEl.style.color = "#1b7c2f";
           statusEl.textContent =
@@ -511,7 +496,6 @@
           emailInput.value = "";
         }, 800);
 
-        // Re-enable button later in case they want to try again
         setTimeout(() => {
           submitBtn.disabled = false;
         }, 3000);
@@ -519,7 +503,6 @@
     });
   </script>
 
-  <!-- BabyPay calculation logic -->
   <script src="popup.js"></script>
 </body>
 </html>
