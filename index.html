@@ -322,10 +322,10 @@
   <div class="inline-row">
     <input id="paidWeeks" type="number" placeholder="Paid Leave Weeks (Primary Caretaker Only)" />
     <div class="pay-type-options">
-      <label><input type="checkbox" id="fullPay"> Full</label>
-      <label><input type="checkbox" id="halfPay"> Half</label>
-    </div>
-  </div>
+  <label><input type="checkbox" id="fullPay"> Full Pay</label>
+  <label><input type="checkbox" id="halfPay"> Half Pay</label>
+</div>
+
 
   <!-- After-tax + frequency row -->
   <div class="tax-toggle">
@@ -354,13 +354,17 @@
 
   <!-- Subscribe button (replaces Send Summary) -->
   <button id="subscribeBtn" style="
-    background:#F3E3B0;
-    color:#5A4B24;
-    font-weight:bold;
-    border-radius:6px;
-  ">
-    Subscribe for BabyPay Updates
-  </button>
+  background:#F3E3B0;
+  color:#5A4B24;
+  font-weight:bold;
+  border-radius:6px;
+  transition: background 0.25s ease;
+"
+onmouseover="this.style.background='#E9D89E'"
+onmouseout="this.style.background='#F3E3B0'">
+  Subscribe for BabyPay Updates
+</button>
+
 
   <!-- Results area -->
   <div id="result"></div>
