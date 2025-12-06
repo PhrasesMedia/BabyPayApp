@@ -122,10 +122,23 @@
       cursor: pointer;
       font-size: 14px;
       display: block;
+      transition: background-color 0.2s ease;
     }
 
     button:hover {
       background-color: #1976D2;
+    }
+
+    #subscribeBtn {
+      background: #F3E3B0;
+      color: #5A4B24;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: background 0.25s ease;
+    }
+
+    #subscribeBtn:hover {
+      background: #E9D89E;
     }
 
     #result {
@@ -260,6 +273,17 @@
       text-decoration: underline;
       color: #444;
     }
+
+    /* Subscribe modal overlay */
+    #subscribeModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
   </style>
 </head>
 
@@ -315,19 +339,8 @@
   <button id="return3">Return to Work - 3 Days</button>
   <button id="return4">Return to Work - 4 Days</button>
 
-  <!-- Subscribe button – now just opens Buttondown -->
-  <button
-    id="subscribeBtn"
-    style="
-      background:#F3E3B0;
-      color:#5A4B24;
-      font-weight:bold;
-      border-radius:6px;
-      transition: background 0.25s ease;
-    "
-    onclick="window.open('https://buttondown.email/YOURUSERNAME', '_blank')"
-    onmouseover="this.style.background='#E9D89E'"
-    onmouseout="this.style.background='#F3E3B0'">
+  <!-- Subscribe button – opens popup modal -->
+  <button id="subscribeBtn">
     Subscribe for BabyPay Updates
   </button>
 
@@ -385,7 +398,93 @@
     <a href="privacy.html">Privacy Policy</a>
   </div>
 
-  <!-- Scripts -->
+  <!-- Subscribe Modal -->
+  <div id="subscribeModal">
+    <div style="
+      background:#fff;
+      padding:20px;
+      border-radius:10px;
+      width:320px;
+      max-width:90%;
+      text-align:left;
+      box-shadow:0 6px 18px rgba(0,0,0,0.18);
+    ">
+      <h3 style="margin-top:0;">Join the BabyPay Mailing List</h3>
+      <p style="font-size:13px; margin-bottom:10px;">
+        Receive updates, improvements, and new features. Unsubscribe any time.
+      </p>
+
+      <!-- Direct Buttondown embed form (no API key, no backend) -->
+      <form
+        action="https://buttondown.com/api/emails/embed-subscribe/frazer"
+        method="post"
+        target="_blank"
+      >
+        <input
+          type="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+          style="width:100%; padding:8px; margin-bottom:6px; box-sizing:border-box;"
+        />
+        <input type="hidden" name="embed" value="1" />
+        <button type="submit" style="
+          width:100%;
+          padding:10px;
+          background:#F3E3B0;
+          color:#5A4B24;
+          font-weight:bold;
+          border-radius:6px;
+          border:none;
+        ">
+          Subscribe
+        </button>
+      </form>
+
+      <button
+        id="closeSubscribeModal"
+        style="
+          margin-top:8px;
+          width:100%;
+          background:#ccc;
+          border:none;
+          padding:8px;
+          color:#000;
+          border-radius:6px;
+        "
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal wiring (no API keys, no fetch) -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const subscribeBtn = document.getElementById("subscribeBtn");
+      const modal = document.getElementById("subscribeModal");
+      const closeBtn = document.getElementById("closeSubscribeModal");
+
+      if (!subscribeBtn || !modal || !closeBtn) return;
+
+      const openModal = () => {
+        modal.style.display = "flex";
+      };
+
+      const closeModal = () => {
+        modal.style.display = "none";
+      };
+
+      subscribeBtn.addEventListener("click", openModal);
+      closeBtn.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+    });
+  </script>
+
+  <!-- BabyPay calculation logic -->
   <script src="popup.js"></script>
 </body>
 </html>
