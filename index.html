@@ -244,7 +244,6 @@
       background-color: #EC407A;
     }
 
-    /* Footer */
     .footer-links {
       margin-top: 18px;
       font-size: 11px;
@@ -316,28 +315,30 @@
   <button id="return3">Return to Work - 3 Days</button>
   <button id="return4">Return to Work - 4 Days</button>
 
-  <!-- Subscribe button (updated hover + colour) -->
-  <button id="subscribeBtn" style="
-    background:#F3E3B0;
-    color:#5A4B24;
-    font-weight:bold;
-    border-radius:6px;
-    transition: background 0.25s ease;
-  "
+  <!-- Subscribe button – now just opens Buttondown -->
+  <button
+    id="subscribeBtn"
+    style="
+      background:#F3E3B0;
+      color:#5A4B24;
+      font-weight:bold;
+      border-radius:6px;
+      transition: background 0.25s ease;
+    "
+    onclick="window.open('https://buttondown.email/YOURUSERNAME', '_blank')"
     onmouseover="this.style.background='#E9D89E'"
     onmouseout="this.style.background='#F3E3B0'">
     Subscribe for BabyPay Updates
   </button>
 
-  <!-- Results -->
+  <!-- Results area -->
   <div id="result"></div>
 
-  <!-- Support -->
+  <!-- Support + affiliate section -->
   <div class="sponsor">
     <a href="https://ko-fi.com/babypay" target="_blank">&#10084; Support BabyPay</a>
   </div>
 
-  <!-- Affiliate Section -->
   <div class="product-section" style="display:none;">
     <div class="product-section-title">Recommended by BabyPay (Affiliate)</div>
     <div class="product-card-list">
@@ -372,130 +373,19 @@
     </div>
   </div>
 
-  <!-- Disclaimer -->
   <p class="disclaimer">
     * BabyPay is for general planning only and does not constitute financial advice.<br>
     These figures are estimates only and may not reflect your actual income.<br>
     Please confirm details with your employer or Services Australia.
   </p>
 
-  <!-- Footer -->
+  <!-- Footer: Terms + Privacy -->
   <div class="footer-links">
     <a href="terms.html">Terms &amp; Conditions</a> •
     <a href="privacy.html">Privacy Policy</a>
   </div>
 
-  <!-- Subscribe Modal -->
-  <div id="subscribeModal" style="
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.55);
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-  ">
-    <div style="
-      background:#fff;
-      padding:20px;
-      border-radius:10px;
-      width:320px;
-      max-width:90%;
-      text-align:left;
-      box-shadow:0 6px 18px rgba(0,0,0,0.18);
-    ">
-      <h3 style="margin-top:0;">Join the BabyPay Mailing List</h3>
-      <p style="font-size:13px; margin-bottom:10px;">
-        Receive updates, improvements, and new features.<br>Unsubscribe anytime.
-      </p>
-
-      <form id="subscribeForm">
-        <input
-          type="email"
-          id="subscribeEmail"
-          placeholder="you@example.com"
-          required
-          style="width:100%; padding:8px; margin-bottom:6px; box-sizing:border-box;"
-        />
-
-        <button type="submit" style="
-          width:100%;
-          padding:10px;
-          background:#F3E3B0;
-          color:#5A4B24;
-          font-weight:bold;
-          border-radius:6px;
-          border:none;
-        ">
-          Subscribe
-        </button>
-      </form>
-
-      <button
-        id="closeSubscribeModal"
-        style="
-          margin-top:8px;
-          width:100%;
-          background:#ccc;
-          border:none;
-          padding:8px;
-          color:#000;
-          border-radius:6px;
-        "
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
-
-  <!-- Subscribe logic -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const subscribeBtn = document.getElementById("subscribeBtn");
-      const modal = document.getElementById("subscribeModal");
-      const closeBtn = document.getElementById("closeSubscribeModal");
-      const form = document.getElementById("subscribeForm");
-
-      // Open modal
-      subscribeBtn.addEventListener("click", () => {
-        modal.style.display = "flex";
-      });
-
-      // Close modal
-      const closeModal = () => modal.style.display = "none";
-      closeBtn.addEventListener("click", closeModal);
-      modal.addEventListener("click", e => {
-        if (e.target === modal) closeModal();
-      });
-
-      // Handle subscription
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const emailInput = document.getElementById("subscribeEmail");
-        const email = emailInput.value.trim();
-        if (!email) return;
-
-        try {
-          const res = await fetch("https://ancient-forest-4a66.phrasesmedia.workers.dev/subscribe", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email })
-          });
-
-          if (!res.ok) throw new Error();
-
-          alert("You're subscribed! 🎉");
-          emailInput.value = "";
-          closeModal();
-        } catch (err) {
-          alert("Couldn't subscribe right now, please try again later.");
-        }
-      });
-    });
-  </script>
-
+  <!-- Scripts -->
   <script src="popup.js"></script>
-
 </body>
 </html>
