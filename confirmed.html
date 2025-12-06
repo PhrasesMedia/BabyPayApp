@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Subscription Confirmed – BabyPay</title>
 
-  <!-- BabyPay Favicon (optional if you have icon.png) -->
+  <!-- Redirect to BabyPay.com.au after 3 seconds -->
+  <meta http-equiv="refresh" content="3; URL=https://babypay.com.au">
+
   <link rel="icon" type="image/png" href="icon.png">
 
   <style>
@@ -20,7 +22,6 @@
       min-height: 100vh;
       color: #333;
     }
-
     .card {
       background: white;
       padding: 40px 32px;
@@ -30,26 +31,22 @@
       text-align: center;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
-
     .logo {
       width: 70px;
       margin-bottom: 12px;
     }
-
     h1 {
       margin-top: 0;
       font-size: 24px;
       font-weight: 700;
       color: #222;
     }
-
     p {
       font-size: 15px;
       line-height: 1.6;
       color: #555;
       margin: 12px 0;
     }
-
     .return-btn {
       display: inline-block;
       background: #F3E3B0;
@@ -62,11 +59,9 @@
       margin-top: 18px;
       transition: background 0.25s ease;
     }
-
     .return-btn:hover {
       background: #E9D89E;
     }
-
     .footer {
       margin-top: 20px;
       font-size: 12px;
@@ -82,9 +77,13 @@
 
     <h1>You're subscribed! 🎉</h1>
 
-    <p>Thanks for confirming your email — you're officially part of the BabyPay community.</p>
+    <p>Thanks for confirming your email — you're now officially part of the BabyPay community.</p>
 
-    <p>You’ll now receive updates on new tools, improvements, and features to help plan parental leave with clarity and confidence.</p>
+    <p>You’ll receive updates on new tools, improvements, and features that make planning parental leave easier.</p>
+
+    <p style="margin-top:20px; font-size:13px; color:#777;">
+      Redirecting you to BabyPay…  
+    </p>
 
     <a href="https://babypay.com.au" class="return-btn">
       Return to BabyPay
