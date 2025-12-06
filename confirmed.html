@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're Subscribed — BabyPay</title>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      color: #333;
+    }
+
+    .card {
+      background: white;
+      padding: 32px 28px;
+      border-radius: 14px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      width: 80px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 12px 18px;
+      background: #F3E3B0;
+      color: #5A4B24;
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.25s;
+    }
+
+    .btn:hover {
+      background: #E9D89E;
+    }
+
+    .footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <img src="icon.png" alt="BabyPay Logo" class="logo">
+
+    <h1>You're subscribed! 🎉</h1>
+    <p>Thanks for confirming your email — you're officially part of the BabyPay community.</p>
+
+    <p>You’ll now receive updates on new tools, improvements, and features to help plan parental leave with clarity and confidence.</p>
+
+    <a href="/BabyPayApp/" class="btn">Return to BabyPay</a>
+
+    <div class="footer">
+      BabyPay — Helping expecting parents plan with clarity.
+    </div>
+  </div>
+</body>
+</html>
